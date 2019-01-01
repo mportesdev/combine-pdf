@@ -1,8 +1,11 @@
 #!/usr/bin/python
 # coding: utf-8
 
-from PySide2 import QtWidgets, QtCore, QtGui
-import os, json, PyPDF2
+from PySide2 import QtWidgets, QtGui
+import os
+import json
+import PyPDF2
+
 
 class MainWindow(QtWidgets.QWidget):
 
@@ -13,142 +16,150 @@ class MainWindow(QtWidgets.QWidget):
         try:
             with open("config.json") as file:
                 self.config = json.load(file)
-        except:
+        except FileNotFoundError:
             self.config = {"Recent open path": os.curdir,
                            "Recent save path": os.curdir,
+                           "Recent save name": "file.pdf",
                            "Number of items": 5}
-        self.fileInfo = [{"filename": "", "pages": 0, "output": []} for _ in range(self.config["Number of items"])]
-        self.filenameLabels = []
-        self.pagesInfos = []
-        self.removeButtons = []
-        self.rbuttonsAll = []
-        self.rbuttonsPages = []
-        self.rbuttonGroups = []
-        self.pageSelectEdits = []
-        self.pageSelectInfos = []
+        self.file_info = [{"filename": "", "pages": 0, "output": []}
+                          for _ in range(self.config["Number of items"])]
+        self.filename_labels = []
+        self.pages_infos = []
+        self.remove_buttons = []
+        self.rbuttons_All = []
+        self.rbuttons_Pages = []
+        self.rbutton_groups = []
+        self.page_select_edits = []
+        self.page_select_infos = []
 
-        logoImg = QtGui.QImage("icons/logo.png")
-        logoLabel = QtWidgets.QLabel()
-        logoLabel.setPixmap(QtGui.QPixmap.fromImage(logoImg))
-        buttonHelp = QtWidgets.QPushButton()
-        buttonHelp.setIcon(QtGui.QIcon("icons/question.png"))
-        buttonHelp.setFixedWidth(30)
-        buttonHelp.setToolTip("Help")
-        buttonHelp.clicked.connect(self.help_box)
-        buttonAbout = QtWidgets.QPushButton()
-        buttonAbout.setIcon(QtGui.QIcon("icons/info.png"))
-        buttonAbout.setFixedWidth(30)
-        buttonAbout.setToolTip("About")
-        buttonAbout.clicked.connect(self.about_box)
-        topLayout = QtWidgets.QGridLayout()
-        topLayout.addWidget(logoLabel, 0, 1)
-        topLayout.addWidget(buttonHelp, 0, 3)
-        topLayout.addWidget(buttonAbout, 0, 4)
-        topLayout.setColumnStretch(0, 1)
-        topLayout.setColumnStretch(1, 3)
-        topLayout.setColumnStretch(2, 1)
-        topLayout.setColumnStretch(3, 1)
-        topLayout.setColumnStretch(4, 1)
+        logo_img = QtGui.QImage("icons/logo.png")
+        logo_label = QtWidgets.QLabel()
+        logo_label.setPixmap(QtGui.QPixmap.fromImage(logo_img))
+        button_Help = QtWidgets.QPushButton()
+        button_Help.setIcon(QtGui.QIcon("icons/question.png"))
+        button_Help.setFixedWidth(30)
+        button_Help.setToolTip("Help")
+        button_Help.clicked.connect(self.help_box)
+        button_About = QtWidgets.QPushButton()
+        button_About.setIcon(QtGui.QIcon("icons/info.png"))
+        button_About.setFixedWidth(30)
+        button_About.setToolTip("About")
+        button_About.clicked.connect(self.about_box)
+        top_layout = QtWidgets.QGridLayout()
+        top_layout.addWidget(logo_label, 0, 1)
+        top_layout.addWidget(button_Help, 0, 3)
+        top_layout.addWidget(button_About, 0, 4)
+        top_layout.setColumnStretch(0, 1)
+        top_layout.setColumnStretch(1, 3)
+        top_layout.setColumnStretch(2, 1)
+        top_layout.setColumnStretch(3, 1)
+        top_layout.setColumnStretch(4, 1)
 
-        centralLayout = QtWidgets.QGridLayout()
+        central_layout = QtWidgets.QGridLayout()
         line = QtWidgets.QLabel()
         line.setFrameStyle(QtWidgets.QFrame.HLine | QtWidgets.QFrame.Sunken)
-        centralLayout.addWidget(line, 0, 0, 1, 5)
+        central_layout.addWidget(line, 0, 0, 1, 5)
         for i in range(self.config["Number of items"]):
-            browseButton = QtWidgets.QPushButton("Select file...")
-            browseButton.clicked[bool].connect(lambda *args, item=i: self.open_file(item))
-            filenameLabel = QtWidgets.QLabel("[no file]")
-            filenameLabel.setEnabled(False)
-            self.filenameLabels.append(filenameLabel)
-            pagesInfo = QtWidgets.QLabel()
-            pagesInfo.setStyleSheet("color: #477b6e")
-            self.pagesInfos.append(pagesInfo)
-            removeButton = QtWidgets.QPushButton()
-            removeButton.setIcon(QtGui.QIcon("icons/trash.png"))
-            removeButton.setToolTip("Remove this file")
-            removeButton.setFixedWidth(30)
-            removeButton.clicked.connect(lambda *args, item=i: self.remove_file(item))
-            removeButton.clicked.connect(self.update_main_button)
-            removeButton.setVisible(False)
-            self.removeButtons.append(removeButton)
+            button_Browse = QtWidgets.QPushButton("Select file...")
+            button_Browse.clicked[bool].connect(lambda *args, item=i:
+                                                self.open_file(item))
+            filename_label = QtWidgets.QLabel("[no file]")
+            filename_label.setEnabled(False)
+            self.filename_labels.append(filename_label)
+            pages_info = QtWidgets.QLabel()
+            pages_info.setStyleSheet("color: #477b6e")
+            self.pages_infos.append(pages_info)
+            button_Remove = QtWidgets.QPushButton()
+            button_Remove.setIcon(QtGui.QIcon("icons/trash.png"))
+            button_Remove.setToolTip("Remove this file")
+            button_Remove.setFixedWidth(30)
+            button_Remove.clicked.connect(lambda *args, item=i:
+                                          self.remove_file(item))
+            button_Remove.clicked.connect(self.update_main_button)
+            button_Remove.setVisible(False)
+            self.remove_buttons.append(button_Remove)
 
-            rbuttonAll = QtWidgets.QRadioButton("All")
-            rbuttonAll.toggled.connect(lambda *args, item=i: self.switch_rbuttons(item))
-            rbuttonAll.toggled.connect(self.update_main_button)
-            rbuttonAll.setVisible(False)
-            self.rbuttonsAll.append(rbuttonAll)
-            rbuttonPages = QtWidgets.QRadioButton("Pages")
-            rbuttonPages.setVisible(False)
-            self.rbuttonsPages.append(rbuttonPages)
-            rbuttonGroup = QtWidgets.QButtonGroup()
-            rbuttonGroup.addButton(rbuttonAll)
-            rbuttonGroup.addButton(rbuttonPages)
-            self.rbuttonGroups.append(rbuttonGroup)
-            pageSelectEdit = QtWidgets.QLineEdit()
-            pageSelectEdit.setPlaceholderText("Example: 1, 3-5, 8")
-            pageSelectEdit.textEdited.connect(lambda *args, item=i: self.update_select_info(item))
-            pageSelectEdit.textEdited.connect(self.update_main_button)
-            pageSelectEdit.setVisible(False)
-            self.pageSelectEdits.append(pageSelectEdit)
-            pageSelectInfo = QtWidgets.QLabel()
-            pageSelectInfo.setVisible(False)
-            pageSelectInfo.setStyleSheet("color: #477b6e")
-            self.pageSelectInfos.append(pageSelectInfo)
+            rbutton_All = QtWidgets.QRadioButton("All")
+            rbutton_All.toggled.connect(lambda *args, item=i:
+                                        self.switch_rbuttons(item))
+            rbutton_All.toggled.connect(self.update_main_button)
+            rbutton_All.setVisible(False)
+            self.rbuttons_All.append(rbutton_All)
+            rbutton_Pages = QtWidgets.QRadioButton("Pages")
+            rbutton_Pages.setVisible(False)
+            self.rbuttons_Pages.append(rbutton_Pages)
+            rbutton_group = QtWidgets.QButtonGroup()
+            rbutton_group.addButton(rbutton_All)
+            rbutton_group.addButton(rbutton_Pages)
+            self.rbutton_groups.append(rbutton_group)
+            page_select_edit = QtWidgets.QLineEdit()
+            page_select_edit.setPlaceholderText("Example: 1, 3-5, 8")
+            page_select_edit.textEdited.connect(lambda *args, item=i:
+                                                self.update_select_info(item))
+            page_select_edit.textEdited.connect(self.update_main_button)
+            page_select_edit.setVisible(False)
+            self.page_select_edits.append(page_select_edit)
+            page_select_info = QtWidgets.QLabel()
+            page_select_info.setVisible(False)
+            page_select_info.setStyleSheet("color: #477b6e")
+            self.page_select_infos.append(page_select_info)
             spacer = QtWidgets.QSpacerItem(30, 0)
 
             line = QtWidgets.QLabel()
-            line.setFrameStyle(QtWidgets.QFrame.HLine | QtWidgets.QFrame.Sunken)
+            line.setFrameStyle(QtWidgets.QFrame.HLine
+                               | QtWidgets.QFrame.Sunken)
 
-            centralLayout.addWidget(browseButton, 5*i + 1, 0)
-            centralLayout.addWidget(filenameLabel, 5*i + 1, 1, 1, 3)
-            centralLayout.addWidget(pagesInfo, 5*i + 1, 4)
-            centralLayout.addWidget(removeButton, 5*i + 1, 5)
-            centralLayout.addWidget(rbuttonAll, 5*i + 2, 1)
-            centralLayout.addWidget(rbuttonPages, 5*i + 2, 2)
-            centralLayout.addWidget(pageSelectEdit, 5*i + 2, 3)
-            centralLayout.addWidget(pageSelectInfo, 5*i + 2, 4)
-            centralLayout.addItem(spacer, 5*i + 2, 5)
-            centralLayout.addWidget(line, 5*i + 3, 0, 1, 5)
+            central_layout.addWidget(button_Browse, 5*i + 1, 0)
+            central_layout.addWidget(filename_label, 5*i + 1, 1, 1, 3)
+            central_layout.addWidget(pages_info, 5*i + 1, 4)
+            central_layout.addWidget(button_Remove, 5*i + 1, 5)
+            central_layout.addWidget(rbutton_All, 5*i + 2, 1)
+            central_layout.addWidget(rbutton_Pages, 5*i + 2, 2)
+            central_layout.addWidget(page_select_edit, 5*i + 2, 3)
+            central_layout.addWidget(page_select_info, 5*i + 2, 4)
+            central_layout.addItem(spacer, 5*i + 2, 5)
+            central_layout.addWidget(line, 5*i + 3, 0, 1, 5)
 
-            ### only for column width testing:
-            # filenameLabel.setStyleSheet("background: #ddd")
-            # pagesInfo.setStyleSheet("background: #ddd")
-            # pagesInfo.setStyleSheet("background: #ddd")
-            # rbuttonAll.setStyleSheet("background: #ddd")
-            # rbuttonPages.setStyleSheet("background: #ddd")
-            # pageSelectInfo.setStyleSheet("background: #ddd")
+            # only for column width testing:
+            # filename_label.setStyleSheet("background: #ddd")
+            # pages_info.setStyleSheet("background: #ddd")
+            # pages_info.setStyleSheet("background: #ddd")
+            # rbutton_All.setStyleSheet("background: #ddd")
+            # rbutton_Pages.setStyleSheet("background: #ddd")
+            # page_select_info.setStyleSheet("background: #ddd")
 
         for i in range(1, 5):
-            centralLayout.setColumnStretch(i, (10, 10, 55, 25)[i-1])
+            central_layout.setColumnStretch(i, (10, 10, 55, 25)[i-1])
 
-        self.buttonCombine = QtWidgets.QPushButton("Combine && &Save")
-        self.buttonCombine.setIcon(QtGui.QIcon("icons/combine.png"))
-        self.buttonCombine.clicked.connect(self.save_file)
-        self.buttonCombine.setFixedHeight(50)
-        self.buttonCombine.setEnabled(False)
-        buttonExit = QtWidgets.QPushButton("E&xit")
-        buttonExit.setIcon(QtGui.QIcon("icons/exit.png"))
-        buttonExit.clicked.connect(self.close)
-        buttonExit.setFixedHeight(50)
-        bottomLayout = QtWidgets.QGridLayout()
-        bottomLayout.addWidget(self.buttonCombine, 0, 1)
-        bottomLayout.addWidget(buttonExit, 0, 2)
-        bottomLayout.setColumnStretch(0, 1)
-        bottomLayout.setColumnStretch(1, 3)
-        bottomLayout.setColumnStretch(2, 1)
-        bottomLayout.setColumnStretch(3, 1)
+        self.button_Combine = QtWidgets.QPushButton("Combine && &Save")
+        self.button_Combine.setIcon(QtGui.QIcon("icons/combine.png"))
+        self.button_Combine.clicked.connect(self.save_file)
+        self.button_Combine.setFixedHeight(50)
+        self.button_Combine.setEnabled(False)
+        button_Exit = QtWidgets.QPushButton("E&xit")
+        button_Exit.setIcon(QtGui.QIcon("icons/exit.png"))
+        button_Exit.clicked.connect(self.close)
+        button_Exit.setFixedHeight(50)
+        bottom_layout = QtWidgets.QGridLayout()
+        bottom_layout.addWidget(self.button_Combine, 0, 1)
+        bottom_layout.addWidget(button_Exit, 0, 2)
+        bottom_layout.setColumnStretch(0, 1)
+        bottom_layout.setColumnStretch(1, 3)
+        bottom_layout.setColumnStretch(2, 1)
+        bottom_layout.setColumnStretch(3, 1)
 
-        masterLayout = QtWidgets.QVBoxLayout()
-        masterLayout.addLayout(topLayout)
-        masterLayout.addLayout(centralLayout)
-        masterLayout.addLayout(bottomLayout)
-        self.setLayout(masterLayout)
+        master_layout = QtWidgets.QVBoxLayout()
+        master_layout.addLayout(top_layout)
+        master_layout.addLayout(central_layout)
+        master_layout.addLayout(bottom_layout)
+        self.setLayout(master_layout)
 
     def open_file(self, n):
-        filenameTuple = QtWidgets.QFileDialog.getOpenFileName(self, "Open a PDF file",
-                                                              self.config["Recent open path"],
-                                                              "PDF files (*.pdf)")
-        filename = filenameTuple[0]
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(
+                      self,
+                      "Open a PDF file",
+                      self.config["Recent open path"],
+                      "PDF files (*.pdf)")
         if filename:
             self.config["Recent open path"] = os.path.split(filename)[0]
             try:
@@ -159,72 +170,89 @@ class MainWindow(QtWidgets.QWidget):
                 msg.setWindowTitle("Warning")
                 msg.setIcon(QtWidgets.QMessageBox.Warning)
                 msg.setText("File could not be read.")
-                msg.setDetailedText("File: {}\n\nError: {}".format(filename, err))
+                msg.setDetailedText("File: {}\n\nError: {}"
+                                    .format(filename, err))
                 msg.exec_()
             else:
-                if self.fileInfo[n]["filename"] == "":
-                    self.filenameLabels[n].setEnabled(True)
-                    self.removeButtons[n].setVisible(True)
-                    self.rbuttonsAll[n].setVisible(True)
-                    self.rbuttonsPages[n].setVisible(True)
-                    self.pageSelectEdits[n].setVisible(True)
-                self.fileInfo[n]["filename"] = filename
-                self.fileInfo[n]["pages"] = pages
-                ### output after opening the file:
-                self.fileInfo[n]["output"] = [(0, pages)]
-                self.filenameLabels[n].setText(os.path.basename(filename))
-                self.filenameLabels[n].setToolTip(filename)
-                self.rbuttonsAll[n].setChecked(True)
-                self.pagesInfos[n].setText("{} {} total".format(pages, "pages" if pages > 1 else "page"))
-                self.pageSelectEdits[n].setText("")
-                self.pageSelectInfos[n].setText("nothing selected")
+                if self.file_info[n]["filename"] == "":
+                    self.filename_labels[n].setEnabled(True)
+                    self.remove_buttons[n].setVisible(True)
+                    self.rbuttons_All[n].setVisible(True)
+                    self.rbuttons_Pages[n].setVisible(True)
+                    self.page_select_edits[n].setVisible(True)
+                self.file_info[n]["filename"] = filename
+                self.file_info[n]["pages"] = pages
+                # output after opening the file:
+                self.file_info[n]["output"] = [(0, pages)]
+                self.filename_labels[n].setText(os.path.basename(filename))
+                self.filename_labels[n].setToolTip(filename)
+                self.rbuttons_All[n].setChecked(True)
+                self.pages_infos[n].setText("{} {} total".format(pages,
+                                            "pages" if pages > 1 else "page"))
+                self.page_select_edits[n].setText("")
+                self.page_select_infos[n].setText("nothing selected")
 
     def remove_file(self, n):
-        self.fileInfo[n]["filename"] = ""
-        self.fileInfo[n]["pages"] = 0
-        self.fileInfo[n]["output"] = []
-        self.filenameLabels[n].setText("[no file]")
-        self.filenameLabels[n].setEnabled(False)
-        self.filenameLabels[n].setToolTip("")
-        self.pagesInfos[n].setText("")
-        self.removeButtons[n].setVisible(False)
-        self.rbuttonsAll[n].setVisible(False)
-        self.rbuttonsPages[n].setVisible(False)
-        self.pageSelectEdits[n].setVisible(False)
-        self.pageSelectInfos[n].setVisible(False)
+        self.file_info[n]["filename"] = ""
+        self.file_info[n]["pages"] = 0
+        self.file_info[n]["output"] = []
+        self.filename_labels[n].setText("[no file]")
+        self.filename_labels[n].setEnabled(False)
+        self.filename_labels[n].setToolTip("")
+        self.pages_infos[n].setText("")
+        self.remove_buttons[n].setVisible(False)
+        self.rbuttons_All[n].setVisible(False)
+        self.rbuttons_Pages[n].setVisible(False)
+        self.page_select_edits[n].setVisible(False)
+        self.page_select_infos[n].setVisible(False)
 
     def save_file(self):
-        outputFilenameTuple = QtWidgets.QFileDialog.getSaveFileName(self, "Save PDF file as...",
-                                                                    self.config["Recent save path"],
-                                                                    "PDF files (*.pdf)")
-        outputFilename = outputFilenameTuple[0]
-        if outputFilename:
-            self.config["Recent save path"] = os.path.split(outputFilename)[0]
-            if outputFilename in [item["filename"] for item in self.fileInfo]:
+        output_filename, _ = QtWidgets.QFileDialog.getSaveFileName(
+                            self,
+                            "Save PDF file as...",
+                            os.path.join(self.config["Recent save path"],
+                                         self.config["Recent save name"]),
+                            "PDF files (*.pdf)")
+        if output_filename:
+            self.config["Recent save path"] = os.path.split(output_filename)[0]
+            if output_filename in [item["filename"]
+                                   for item in self.file_info]:
                 msg = QtWidgets.QMessageBox()
                 msg.setWindowTitle("Warning")
                 msg.setIcon(QtWidgets.QMessageBox.Warning)
-                msg.setText("You are not allowed to overwrite one of the input files.")
+                msg.setText("You are not allowed to overwrite "
+                            "one of the input files.")
                 msg.setInformativeText("Please select a different filename.")
                 msg.exec_()
-                ### to do 2: Dialog: Do you really wish to overwrite one of the input files?
+                # to do 2: Dialog: Do you really wish to overwrite
+                # one of the input files?
             else:
                 merger = PyPDF2.PdfFileMerger()
-                for filename in [item["filename"] for item in self.fileInfo]:
+                for item in self.file_info:
+                    filename = item["filename"]
                     if filename:
-                        ### to do: iterate over "range tuples" and merge as page ranges
-                        merger.append(filename)
-                merger.write(outputFilename)
+                        # iterate over "range tuples" and merge as page ranges
+                        for range_tuple in item["output"]:
+                            print("Appending {} of {}.".format(range_tuple,
+                                                               filename))
+                            merger.append(filename, pages=range_tuple)
+                merger.write(output_filename)
                 merger.close()
 
     def update_select_info(self, n):
-        self.fileInfo[n]["output"], valid = self.string_to_range_tuples(self.pageSelectEdits[n].text(), self.fileInfo[n]["pages"])
+        self.file_info[n]["output"], valid = self.string_to_range_tuples(
+                                            self.page_select_edits[n].text(),
+                                            self.file_info[n]["pages"])
         if valid:
-            selection = self.range_tuples_to_page_count(self.fileInfo[n]["output"])
-            self.pageSelectInfos[n].setText("{} {} selected".format(selection, "pages" if selection > 1 else "page"))
+            selection = self.range_tuples_to_page_count(
+                        self.file_info[n]["output"])
+            self.page_select_infos[n].setText(
+                "{} {} selected".format(selection,
+                                        "pages" if selection > 1 else "page"))
         else:
-            self.pageSelectInfos[n].setText("selection not valid")
-        print("output from evaluating pageSelectEdit:", self.fileInfo[n]["output"])
+            self.page_select_infos[n].setText("selection not valid")
+        print("output from evaluating page_select_edit:",
+              self.file_info[n]["output"])
 
     def string_to_range_tuples(self, user_string, last_page):
         result = []
@@ -232,38 +260,39 @@ class MainWindow(QtWidgets.QWidget):
         if user_string:
             for part in user_string.split(","):
                 try:
-                    ### valid single page number?
-                    fromPage = int(part.strip())
-                except:
-                    ### not a valid single number
+                    # valid single page number?
+                    from_page = int(part.strip())
+                except ValueError:
+                    # not a valid single number
                     try:
-                        ### valid range of page numbers?
-                        fromPage = int(part.split("-")[0].strip())
-                        toPage = int(part.split("-", 1)[1].strip())
-                    except:
-                        ### not a valid range of numbers
+                        # valid range of page numbers?
+                        from_page = int(part.split("-")[0].strip())
+                        to_page = int(part.split("-", 1)[1].strip())
+                    except ValueError:
+                        # not a valid range of numbers
                         valid = False
                         break
                     else:
-                        ### valid range of numbers
-                        if 1 <= fromPage <= last_page and 1 <= toPage <= last_page:
-                            ### we have a range of valid page numbers -> make a
-                            ### tuple to be directly used by merger.append()
-                            ### (page numbered from 0)
-                            range_tuple = (fromPage - 1, toPage)
+                        # valid range of numbers
+                        if 1 <= from_page <= last_page and \
+                           1 <= to_page <= last_page:
+                            # we have a range of valid page numbers -> make a
+                            # tuple to be directly used by merger.append()
+                            # (pages numbered from 0)
+                            range_tuple = (from_page - 1, to_page)
                         else:
-                            ### range of numbers out of page range
+                            # range of numbers out of page range
                             valid = False
                             break
                 else:
-                    ### valid single number
-                    if 1 <= fromPage <= last_page:
-                        ### we have a valid page number -> make a tuple to be
-                        ### directly used by merger.append()
-                        ### (page numbered from 0)
-                        range_tuple = (fromPage - 1, fromPage)
+                    # valid single number
+                    if 1 <= from_page <= last_page:
+                        # we have a valid page number -> make a tuple to be
+                        # directly used by merger.append()
+                        # (pages numbered from 0)
+                        range_tuple = (from_page - 1, from_page)
                     else:
-                        ### number out of page range
+                        # number out of page range
                         valid = False
                         break
                 result.append(range_tuple)
@@ -279,27 +308,30 @@ class MainWindow(QtWidgets.QWidget):
         return result
 
     def update_main_button(self):
-        ### calculated total pages to merge:
-        pages = sum([self.range_tuples_to_page_count(self.fileInfo[i]["output"]) for i in range(self.config["Number of items"])])
+        # calculated total pages to merge:
+        pages = sum([self.range_tuples_to_page_count(
+                     self.file_info[i]["output"])
+                     for i in range(self.config["Number of items"])])
         if pages > 0:
-            self.buttonCombine.setText("Combine && &Save {} {}".format(pages, "pages" if pages > 1 else "page"))
-            self.buttonCombine.setEnabled(True)
+            self.button_Combine.setText("Combine && &Save {} {}".format(pages,
+                                        "pages" if pages > 1 else "page"))
+            self.button_Combine.setEnabled(True)
         else:
-            self.buttonCombine.setText("Combine && &Save")
-            self.buttonCombine.setEnabled(False)
+            self.button_Combine.setText("Combine && &Save")
+            self.button_Combine.setEnabled(False)
 
     def switch_rbuttons(self, n):
-        if self.rbuttonsAll[n].isChecked():
-            self.fileInfo[n]["output"] = [(0, self.fileInfo[n]["pages"])]
-            print("output after checking 'All':", self.fileInfo[n]["output"])
-            self.pageSelectEdits[n].setEnabled(False)
-            self.pageSelectInfos[n].setVisible(False)
+        if self.rbuttons_All[n].isChecked():
+            self.file_info[n]["output"] = [(0, self.file_info[n]["pages"])]
+            print("output after checking 'All':", self.file_info[n]["output"])
+            self.page_select_edits[n].setEnabled(False)
+            self.page_select_infos[n].setVisible(False)
         else:
             self.update_select_info(n)
-            print("output after checking 'Pages':", self.fileInfo[n]["output"])
-            self.pageSelectEdits[n].setEnabled(True)
-            self.pageSelectEdits[n].setFocus()
-            self.pageSelectInfos[n].setVisible(True)
+            print("output after checking 'Pages':", self.file_info[n]["output"])
+            self.page_select_edits[n].setEnabled(True)
+            self.page_select_edits[n].setFocus()
+            self.page_select_infos[n].setVisible(True)
 
     def help_box(self):
         msg = QtWidgets.QMessageBox()
@@ -339,10 +371,12 @@ version 0.8
         with open("config.json", "w") as file:
             json.dump(self.config, file, indent=4)
 
+
 def main():
     app = QtWidgets.QApplication()
-    appWindow = MainWindow()
-    appWindow.run(app)
+    app_window = MainWindow()
+    app_window.run(app)
+
 
 if __name__ == "__main__":
     main()
