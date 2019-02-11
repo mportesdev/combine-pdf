@@ -1,0 +1,6 @@
+config.json
+icons.svg
+_*
+test_*
+/pdf
+/screenshots
