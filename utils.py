@@ -1,13 +1,10 @@
-def string_to_range_tuples(user_string, last_page):
-    """Returns a list of tuples if string is valid, empty list otherwise. From
-    the user's point of view, pages are numbered from 1. In PdfFileMerger
-    interface, pages are numbered from 0.
+def string_to_range_tuples(user_string, number_of_pages):
+    """Returns a list of tuples if 'user_string' is valid, an empty list
+    otherwise. From the user's point of view, pages are numbered from 1.
+    In PdfFileMerger's interface, pages are numbered from 0.
 
-    Example input:    '1-5, 12, 48, 96-98'
+    Example input:    "1-5, 12, 48, 96-98", 98
            output:    [(0, 5), (11, 12), (47, 48), (95, 98)]
-
-    The argument 'last_page' (equal to the PDF file's number of pages) is being
-    passed to check if a page number is in valid range.
     """
     result = []
     valid = True
@@ -15,13 +12,18 @@ def string_to_range_tuples(user_string, last_page):
     if user_string:
         user_string = user_string.strip(" ,")
         for part in user_string.split(","):
+
+            if part.strip() == "":
+                continue
+
             try:
-                # valid single page number?
+                # valid single number?
                 from_page = int(part.strip())
             except ValueError:
-                # not a valid single number
+                # not a single number
+
                 try:
-                    # valid range of page numbers?
+                    # valid range of numbers?
                     from_page = int(part.split("-")[0].strip())
                     to_page = int(part.split("-", 1)[1].strip())
                 except ValueError:
@@ -30,22 +32,21 @@ def string_to_range_tuples(user_string, last_page):
                     break
                 else:
                     # valid range of numbers
-                    if 1 <= from_page <= last_page and \
-                       1 <= to_page <= last_page:
-                        # we have a range of valid page numbers -> make a
-                        # tuple to be directly used by merger.append()
-                        # (pages numbered from 0)
+
+                    if 1 <= from_page <= to_page <= number_of_pages:
+                        # valid page range -> make a tuple to be directly
+                        # passed to merger.append() (pages numbered from 0)
                         range_tuple = (from_page - 1, to_page)
                     else:
                         # range of numbers out of page range
                         valid = False
                         break
             else:
-                # valid single number
-                if 1 <= from_page <= last_page:
-                    # we have a valid page number -> make a tuple to be
-                    # directly used by merger.append()
-                    # (pages numbered from 0)
+                # some single number
+
+                if 1 <= from_page <= number_of_pages:
+                    # valid page number -> make a tuple to be directly
+                    # passed to merger.append() (pages numbered from 0)
                     range_tuple = (from_page - 1, from_page)
                 else:
                     # number out of page range
@@ -53,7 +54,4 @@ def string_to_range_tuples(user_string, last_page):
                     break
             result.append(range_tuple)
 
-    if result and valid:
-        return result, valid
-    else:
-        return [], False
+    return result if valid else []
