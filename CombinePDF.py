@@ -148,9 +148,10 @@ class FileBox:
         self.output_page_count = sum(len(range(*tup)) for tup in tuples)
 
     def update_select_info(self):
-        self.update_output(utils.string_to_range_tuples(
-                                     self.page_select_edit.text(), self.pages))
-        if self.output_tuples:
+        text = self.page_select_edit.text()
+        self.update_output(utils.string_to_range_tuples(text, self.pages))
+
+        if self.output_tuples or text == "":
             self.page_select_info.setText("{} {} selected"
                                           .format(self.output_page_count,
                                                   "pages"
