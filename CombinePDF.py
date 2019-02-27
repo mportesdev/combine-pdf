@@ -25,7 +25,7 @@ class FileBox:
         self.filename_label.setEnabled(False)
 
         self.pages_info = QtWidgets.QLabel()
-        self.pages_info.setStyleSheet("color: #477b6e")
+        self.pages_info.setStyleSheet("color: #568dc0")
 
         self.button_Remove = QtWidgets.QPushButton()
         self.button_Remove.setIcon(QtGui.QIcon("icons/trash.png"))
@@ -54,10 +54,11 @@ class FileBox:
         self.page_select_edit.textEdited.connect(self.parent_app
                                                  .update_main_button)
         self.page_select_edit.setVisible(False)
+        self.default_style = self.page_select_edit.styleSheet()
 
         self.page_select_info = QtWidgets.QLabel()
         self.page_select_info.setVisible(False)
-        self.page_select_info.setStyleSheet("color: #477b6e")
+        self.page_select_info.setStyleSheet("color: #568dc0")
 
         self.spacer = QtWidgets.QSpacerItem(30, 0)
 
@@ -152,13 +153,15 @@ class FileBox:
         self.update_output(utils.string_to_range_tuples(text, self.pages))
 
         if self.output_tuples or text == "":
+            self.page_select_edit.setStyleSheet(self.default_style)
             self.page_select_info.setText("{} {} selected"
                                           .format(self.output_page_count,
                                                   "pages"
                                                   if self.output_page_count > 1
                                                   else "page"))
         else:
-            self.page_select_info.setText("selection not valid")
+            self.page_select_info.setText("")
+            self.page_select_edit.setStyleSheet("background: #ffa0a0")
 
 
 class MainWindow(QtWidgets.QWidget):
