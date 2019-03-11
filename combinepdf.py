@@ -326,14 +326,17 @@ class MainWindow(QtWidgets.QWidget):
         message.exec_()
 
     # text constants as class variables
-    HELP_TEXT = """In the "Pages" input field, enter single page numbers
-or ranges of page numbers. Example: 1, 3-5, 8
+    HELP_TEXT = """In the "Pages" input field, enter single page numbers""" \
+                """ or ranges of page numbers.
+Example: 1, 3-5, 8
 will produce page sequence 1, 3, 4, 5, 8
 
-Order is observed. Example: 2-4, 1
+Order is observed.
+Example: 2-4, 1
 will produce page sequence 2, 3, 4, 1
 
-Repeating is allowed. Example: 1-3, 2, 1-2
+Repeating is allowed.
+Example: 1-3, 2, 1-2
 will produce page sequence 1, 2, 3, 2, 1, 2"""
 
     ABOUT_TEXT = "CombinePDF\n\nversion 0.8.5\n\n3rd February 2018"
