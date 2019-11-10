@@ -6,6 +6,7 @@ def string_to_range_tuples(user_string, number_of_pages):
     Example input:    "1-5, 12, 48, 96-98", 98
            output:    [(0, 5), (11, 12), (47, 48), (95, 98)]
     """
+    # TODO: rewrite using regexps
     result = []
     valid = True
 

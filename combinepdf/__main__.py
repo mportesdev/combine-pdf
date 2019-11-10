@@ -21,6 +21,7 @@ class FileBox:
         self.button_Browse = QtWidgets.QPushButton("Select file...")
         self.button_Browse.clicked.connect(self.open_file)
 
+        # TODO: wrap long filenames so that the window width doesn't change
         self.filename_label = QtWidgets.QLabel("[no file]")
         self.filename_label.setEnabled(False)
 
@@ -96,6 +97,7 @@ class FileBox:
             try:
                 reader = PyPDF2.PdfFileReader(filename)
                 num_pages = reader.numPages
+            # TODO: more specific exception class(es)
             except Exception as err:
                 MainWindow.message_box(icon=QtWidgets.QMessageBox.Warning,
                                        title="Warning",
@@ -117,6 +119,7 @@ class FileBox:
                 self.rbutton_All.setChecked(True)
                 self.pages_info.setText("{} {} total".format(num_pages,
                                         "pages" if num_pages > 1 else "page"))
+                # TODO: update main button - parent_app.update_main_button
                 self.page_select_edit.setText("")
 
     def remove_file(self):
@@ -267,6 +270,8 @@ class MainWindow(QtWidgets.QWidget):
                 # to do: dialog
                 # Do you really wish to overwrite one of the input files?
             else:
+                # TODO: handle PyPDF2's custom exceptions during the
+                #  merge process
                 merger = PyPDF2.PdfFileMerger()
                 for file_box in self.file_boxes:
                     filename = file_box.filename
@@ -291,6 +296,7 @@ class MainWindow(QtWidgets.QWidget):
             self.button_Combine.setEnabled(False)
 
     def add_item(self):
+        # TODO: allow adding one or more blank pages between items
         file_box = FileBox(parent_app=self, filename="", pages=0,
                            output_tuples=[])
         self.file_boxes.append(file_box)
@@ -326,6 +332,7 @@ class MainWindow(QtWidgets.QWidget):
         message.exec_()
 
     # text constants as class variables
+    # TODO: make a nicer Help and About dialog
     HELP_TEXT = """In the "Pages" input field, enter single page numbers""" \
                 """ or ranges of page numbers.
 Example: 1, 3-5, 8
