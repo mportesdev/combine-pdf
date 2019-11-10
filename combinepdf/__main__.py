@@ -28,7 +28,7 @@ class FileBox:
         self.pages_info.setStyleSheet("color: #568dc0")
 
         self.button_Remove = QtWidgets.QPushButton()
-        self.button_Remove.setIcon(QtGui.QIcon("icons/trash.png"))
+        self.button_Remove.setIcon(QtGui.QIcon(etc.ICON_TRASH))
         self.button_Remove.setToolTip("Remove this file")
         self.button_Remove.setFixedWidth(30)
         self.button_Remove.clicked.connect(self.remove_file)
@@ -186,11 +186,11 @@ class MainWindow(QtWidgets.QWidget):
                            for __ in range(self.config.get("# of items", 3))]
 
         button_Help = QtWidgets.QPushButton("Help")
-        button_Help.setIcon(QtGui.QIcon("icons/question.png"))
+        button_Help.setIcon(QtGui.QIcon(etc.ICON_QUESTION))
         button_Help.clicked.connect(self.help_box)
 
         button_About = QtWidgets.QPushButton("About")
-        button_About.setIcon(QtGui.QIcon("icons/info.png"))
+        button_About.setIcon(QtGui.QIcon(etc.ICON_INFO))
         button_About.clicked.connect(self.about_box)
 
         top_layout = QtWidgets.QGridLayout()
@@ -214,19 +214,19 @@ class MainWindow(QtWidgets.QWidget):
             self.central_layout.addWidget(line)
 
         button_Add = QtWidgets.QPushButton("&Add")
-        button_Add.setIcon(QtGui.QIcon("icons/plus.png"))
+        button_Add.setIcon(QtGui.QIcon(etc.ICON_PLUS))
         button_Add.setToolTip("Add another row (Alt+A)")
         button_Add.clicked.connect(self.add_item)
 
         self.button_Combine = QtWidgets.QPushButton("Combine && &Save")
-        self.button_Combine.setIcon(QtGui.QIcon("icons/combine.png"))
+        self.button_Combine.setIcon(QtGui.QIcon(etc.ICON_COMBINE))
         self.button_Combine.setFixedHeight(50)
         self.button_Combine.setToolTip("Save the combined PDF file (Alt+S)")
         self.button_Combine.clicked.connect(self.save_file)
         self.button_Combine.setEnabled(False)
 
         button_Exit = QtWidgets.QPushButton("E&xit")
-        button_Exit.setIcon(QtGui.QIcon("icons/exit.png"))
+        button_Exit.setIcon(QtGui.QIcon(etc.ICON_EXIT))
         button_Exit.setFixedHeight(50)
         button_Exit.setToolTip("Exit the application (Alt+X)")
         button_Exit.clicked.connect(self.close)
