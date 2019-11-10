@@ -11,10 +11,10 @@ def string_to_range_tuples(user_string, number_of_pages):
     valid = True
 
     if user_string:
-        user_string = user_string.strip(" ,")
-        for part in user_string.split(","):
+        user_string = user_string.strip(' ,')
+        for part in user_string.split(','):
 
-            if part.strip() == "":
+            if part.strip() == '':
                 continue
 
             try:
@@ -25,8 +25,8 @@ def string_to_range_tuples(user_string, number_of_pages):
 
                 try:
                     # valid range of numbers?
-                    from_page = int(part.split("-")[0].strip())
-                    to_page = int(part.split("-", 1)[1].strip())
+                    from_page = int(part.split('-')[0].strip())
+                    to_page = int(part.split('-', 1)[1].strip())
                 except ValueError:
                     # not a valid range of numbers
                     valid = False

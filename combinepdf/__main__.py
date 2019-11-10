@@ -18,7 +18,7 @@ class FileBox:
         self.update_output(output_tuples)
 
         # first row of widgets
-        self.button_Browse = QtWidgets.QPushButton("Select file...")
+        self.button_Browse = QtWidgets.QPushButton('Select file...')
         self.button_Browse.clicked.connect(self.open_file)
 
         # TODO: wrap long filenames so that the window width doesn't change
@@ -26,23 +26,23 @@ class FileBox:
         self.filename_label.setEnabled(False)
 
         self.pages_info = QtWidgets.QLabel()
-        self.pages_info.setStyleSheet("color: #568dc0")
+        self.pages_info.setStyleSheet('color: #568dc0')
 
         self.button_Remove = QtWidgets.QPushButton()
         self.button_Remove.setIcon(QtGui.QIcon(etc.ICON_TRASH))
-        self.button_Remove.setToolTip("Remove this file")
+        self.button_Remove.setToolTip('Remove this file')
         self.button_Remove.setFixedWidth(30)
         self.button_Remove.clicked.connect(self.remove_file)
         self.button_Remove.clicked.connect(self.parent_app.update_main_button)
         self.button_Remove.setVisible(False)
 
         # second row of widgets
-        self.rbutton_All = QtWidgets.QRadioButton("All")
+        self.rbutton_All = QtWidgets.QRadioButton('All')
         self.rbutton_All.toggled.connect(self.switch_rbuttons)
         self.rbutton_All.toggled.connect(self.parent_app.update_main_button)
         self.rbutton_All.setVisible(False)
 
-        self.rbutton_Pages = QtWidgets.QRadioButton("Pages")
+        self.rbutton_Pages = QtWidgets.QRadioButton('Pages')
         self.rbutton_Pages.setVisible(False)
 
         self.rbutton_group = QtWidgets.QButtonGroup()
@@ -50,7 +50,7 @@ class FileBox:
         self.rbutton_group.addButton(self.rbutton_Pages)
 
         self.page_select_edit = QtWidgets.QLineEdit()
-        self.page_select_edit.setPlaceholderText("Example: 1, 3-5, 8")
+        self.page_select_edit.setPlaceholderText('Example: 1, 3-5, 8')
         self.page_select_edit.textEdited.connect(self.update_select_info)
         self.page_select_edit.textEdited.connect(self.parent_app
                                                  .update_main_button)
@@ -59,17 +59,17 @@ class FileBox:
 
         self.page_select_info = QtWidgets.QLabel()
         self.page_select_info.setVisible(False)
-        self.page_select_info.setStyleSheet("color: #568dc0")
+        self.page_select_info.setStyleSheet('color: #568dc0')
 
         self.spacer = QtWidgets.QSpacerItem(30, 0)
 
         # only for column width testing:
-        # self.filename_label.setStyleSheet("background: #ddd")
-        # self.pages_info.setStyleSheet("background: #ddd")
-        # self.pages_info.setStyleSheet("background: #ddd")
-        # self.rbutton_All.setStyleSheet("background: #ddd")
-        # self.rbutton_Pages.setStyleSheet("background: #ddd")
-        # self.page_select_info.setStyleSheet("background: #ddd")
+        # self.filename_label.setStyleSheet('background: #ddd')
+        # self.pages_info.setStyleSheet('background: #ddd')
+        # self.pages_info.setStyleSheet('background: #ddd')
+        # self.rbutton_All.setStyleSheet('background: #ddd')
+        # self.rbutton_Pages.setStyleSheet('background: #ddd')
+        # self.page_select_info.setStyleSheet('background: #ddd')
 
         # layout
         self.layout = QtWidgets.QGridLayout()
@@ -88,24 +88,24 @@ class FileBox:
 
     def open_file(self):
         filename, __ = QtWidgets.QFileDialog.getOpenFileName(
-                       self.parent_app, "Open a PDF file",
-                       self.parent_app.config.get("open path", os.curdir),
-                       "PDF files (*.pdf)")
+            self.parent_app, 'Open a PDF file',
+            self.parent_app.config.get('open path', os.curdir),
+            'PDF files (*.pdf)')
 
         if filename:
-            self.parent_app.config["open path"] = os.path.split(filename)[0]
+            self.parent_app.config['open path'] = os.path.split(filename)[0]
             try:
                 reader = PyPDF2.PdfFileReader(filename)
                 num_pages = reader.numPages
             # TODO: more specific exception class(es)
             except Exception as err:
                 MainWindow.message_box(icon=QtWidgets.QMessageBox.Warning,
-                                       title="Warning",
-                                       text="File could not be read.",
-                                       detailed="File: {}\n\nError: {}"
-                                                .format(filename, err))
+                                       title='Warning',
+                                       text='File could not be read.',
+                                       detailed=f'File: {filename}\n\n'
+                                                f'Error: {err}')
             else:
-                if self.filename == "":
+                if self.filename == '':
                     self.filename_label.setEnabled(True)
                     self.button_Remove.setVisible(True)
                     self.rbutton_All.setVisible(True)
@@ -117,19 +117,19 @@ class FileBox:
                 self.filename_label.setText(os.path.basename(filename))
                 self.filename_label.setToolTip(filename)
                 self.rbutton_All.setChecked(True)
-                self.pages_info.setText("{} {} total".format(num_pages,
-                                        "pages" if num_pages > 1 else "page"))
+                self.pages_info.setText(
+                    f'{num_pages} {"pages" if num_pages > 1 else "page"} total')
                 # TODO: update main button - parent_app.update_main_button
                 self.page_select_edit.setText("")
 
     def remove_file(self):
-        self.filename = ""
+        self.filename = ''
         self.pages = 0
         self.update_output([])
-        self.filename_label.setText("[no file]")
+        self.filename_label.setText('[no file]')
         self.filename_label.setEnabled(False)
-        self.filename_label.setToolTip("")
-        self.pages_info.setText("")
+        self.filename_label.setToolTip('')
+        self.pages_info.setText('')
         self.button_Remove.setVisible(False)
         self.rbutton_All.setVisible(False)
         self.rbutton_Pages.setVisible(False)
@@ -155,44 +155,42 @@ class FileBox:
         text = self.page_select_edit.text()
         self.update_output(utils.string_to_range_tuples(text, self.pages))
 
-        if self.output_tuples or text == "":
+        if self.output_tuples or text == '':
             self.page_select_edit.setStyleSheet(self.default_style)
-            self.page_select_info.setText("{} {} selected"
-                                          .format(self.output_page_count,
-                                                  "pages"
-                                                  if self.output_page_count > 1
-                                                  else "page"))
+            self.page_select_info.setText(
+                f'{self.output_page_count} '
+                f'{"pages" if self.output_page_count > 1 else "page"} selected')
         else:
-            self.page_select_info.setText("")
-            self.page_select_edit.setStyleSheet("background: #ffa0a0")
+            self.page_select_info.setText('')
+            self.page_select_edit.setStyleSheet('background: #ffa0a0')
 
 
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("CombinePDF")
+        self.setWindowTitle('CombinePDF')
         self.resize(QtCore.QSize(640, 300))
 
         try:
-            with open("config.json") as f:
+            with open('config.json') as f:
                 self.config = json.load(f)
         # json.decoder.JSONDecodeError is subclass of ValueError
         except (FileNotFoundError, ValueError):
-            self.config = {"open path": os.curdir,
-                           "save path": os.curdir,
-                           "save filename": "joined-pdf.pdf",
-                           "# of items": 3}
+            self.config = {'open path': os.curdir,
+                           'save path': os.curdir,
+                           'save filename': 'joined-pdf.pdf',
+                           '# of items': 3}
 
         # list of FileBox objects; can be appended by 'add_item' method
-        self.file_boxes = [FileBox(parent_app=self, filename="",
+        self.file_boxes = [FileBox(parent_app=self, filename='',
                                    pages=0, output_tuples=[])
-                           for __ in range(self.config.get("# of items", 3))]
+                           for __ in range(self.config.get('# of items', 3))]
 
-        button_Help = QtWidgets.QPushButton("Help")
+        button_Help = QtWidgets.QPushButton('Help')
         button_Help.setIcon(QtGui.QIcon(etc.ICON_QUESTION))
         button_Help.clicked.connect(self.help_box)
 
-        button_About = QtWidgets.QPushButton("About")
+        button_About = QtWidgets.QPushButton('About')
         button_About.setIcon(QtGui.QIcon(etc.ICON_INFO))
         button_About.clicked.connect(self.about_box)
 
@@ -216,22 +214,22 @@ class MainWindow(QtWidgets.QWidget):
                                | QtWidgets.QFrame.Sunken)
             self.central_layout.addWidget(line)
 
-        button_Add = QtWidgets.QPushButton("&Add")
+        button_Add = QtWidgets.QPushButton('&Add')
         button_Add.setIcon(QtGui.QIcon(etc.ICON_PLUS))
-        button_Add.setToolTip("Add another row (Alt+A)")
+        button_Add.setToolTip('Add another row (Alt+A)')
         button_Add.clicked.connect(self.add_item)
 
-        self.button_Combine = QtWidgets.QPushButton("Combine && &Save")
+        self.button_Combine = QtWidgets.QPushButton('Combine && &Save')
         self.button_Combine.setIcon(QtGui.QIcon(etc.ICON_COMBINE))
         self.button_Combine.setFixedHeight(50)
-        self.button_Combine.setToolTip("Save the combined PDF file (Alt+S)")
+        self.button_Combine.setToolTip('Save the combined PDF file (Alt+S)')
         self.button_Combine.clicked.connect(self.save_file)
         self.button_Combine.setEnabled(False)
 
-        button_Exit = QtWidgets.QPushButton("E&xit")
+        button_Exit = QtWidgets.QPushButton('E&xit')
         button_Exit.setIcon(QtGui.QIcon(etc.ICON_EXIT))
         button_Exit.setFixedHeight(50)
-        button_Exit.setToolTip("Exit the application (Alt+X)")
+        button_Exit.setToolTip('Exit the application (Alt+X)')
         button_Exit.clicked.connect(self.close)
 
         bottom_layout = QtWidgets.QGridLayout()
@@ -250,25 +248,23 @@ class MainWindow(QtWidgets.QWidget):
 
     def save_file(self):
         output_filename, __ = QtWidgets.QFileDialog.getSaveFileName(
-                              self, "Save PDF file as...",
-                              os.path.join(self.config.get("save path",
-                                                           os.curdir),
-                                           self.config.get("save filename",
-                                                           "file.pdf")),
-                              "PDF files (*.pdf)")
+            self, 'Save PDF file as...',
+            os.path.join(self.config.get('save path', os.curdir),
+                         self.config.get('save filename', 'file.pdf')),
+            'PDF files (*.pdf)')
         if output_filename:
-            self.config["save path"], self.config["save filename"] \
+            self.config['save path'], self.config['save filename'] \
                                            = os.path.split(output_filename)
             if output_filename in [file_box.filename
                                    for file_box in self.file_boxes]:
                 self.message_box(icon=QtWidgets.QMessageBox.Warning,
-                                 title="Warning",
-                                 text="You are not allowed to overwrite "
-                                      "one of the input files.",
-                                 informative="Please select a different "
-                                             "filename.")
-                # to do: dialog
-                # Do you really wish to overwrite one of the input files?
+                                 title='Warning',
+                                 text='You are not allowed to overwrite '
+                                      'one of the input files.',
+                                 informative='Please select a different '
+                                             'filename.')
+                # TODO: dialog
+                #  'Do you really wish to overwrite one of the input files?'
             else:
                 # TODO: handle PyPDF2's custom exceptions during the
                 #  merge process
@@ -286,13 +282,12 @@ class MainWindow(QtWidgets.QWidget):
         total_pages = sum([file_box.output_page_count
                            for file_box in self.file_boxes])
         if total_pages > 0:
-            self.button_Combine.setText("Combine && &Save {} {}"
-                                        .format(total_pages,
-                                                "pages" if total_pages > 1
-                                                else "page"))
+            self.button_Combine.setText(
+                f'Combine && &Save {total_pages} '
+                f'{"pages" if total_pages > 1 else "page"}')
             self.button_Combine.setEnabled(True)
         else:
-            self.button_Combine.setText("Combine && &Save")
+            self.button_Combine.setText('Combine && &Save')
             self.button_Combine.setEnabled(False)
 
     def add_item(self):
@@ -308,22 +303,22 @@ class MainWindow(QtWidgets.QWidget):
 
     def help_box(self):
         self.message_box(icon=QtWidgets.QMessageBox.Information,
-                         title="Help", text=self.HELP_TEXT)
+                         title='Help', text=self.HELP_TEXT)
 
     def about_box(self):
         self.message_box(icon=QtWidgets.QMessageBox.Information,
-                         title="About", text=self.ABOUT_TEXT)
+                         title='About', text=self.ABOUT_TEXT)
 
     def run(self, app):
         self.show()
         app.exec_()
 
     def __del__(self):
-        with open("config.json", "w") as file:
+        with open('config.json', 'w') as file:
             json.dump(self.config, file, indent=4)
 
     @staticmethod
-    def message_box(icon, title, text, detailed="", informative=""):
+    def message_box(icon, title, text, detailed='', informative=''):
         message = QtWidgets.QMessageBox(icon, title, text)
         if detailed:
             message.setDetailedText(detailed)
@@ -333,20 +328,18 @@ class MainWindow(QtWidgets.QWidget):
 
     # text constants as class variables
     # TODO: make a nicer Help and About dialog
-    HELP_TEXT = """In the "Pages" input field, enter single page numbers""" \
-                """ or ranges of page numbers.
-Example: 1, 3-5, 8
-will produce page sequence 1, 3, 4, 5, 8
+    HELP_TEXT = ('In the "Pages" input field, enter single page numbers'
+                 ' or ranges of page numbers.\n'
+                 'Example: 1, 3-5, 8\n'
+                 'will produce page sequence 1, 3, 4, 5, 8\n\n'
+                 'Order is observed.\n'
+                 'Example: 2-4, 1\n'
+                 'will produce page sequence 2, 3, 4, 1\n\n'
+                 'Repeating is allowed.\n'
+                 'Example: 1-3, 2, 1-2\n'
+                 'will produce page sequence 1, 2, 3, 2, 1, 2')
 
-Order is observed.
-Example: 2-4, 1
-will produce page sequence 2, 3, 4, 1
-
-Repeating is allowed.
-Example: 1-3, 2, 1-2
-will produce page sequence 1, 2, 3, 2, 1, 2"""
-
-    ABOUT_TEXT = "CombinePDF\n\nversion 0.8.5\n\n3rd February 2018"
+    ABOUT_TEXT = 'CombinePDF\n\nversion 0.8.7\n\n10 November 2019'
 
 
 def main():
@@ -355,5 +348,5 @@ def main():
     app_window.run(app)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
