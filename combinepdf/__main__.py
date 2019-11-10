@@ -1,11 +1,11 @@
-#!/usr/bin/python
-# coding: utf-8
-
-import os
 import json
+import os
+
 import PyPDF2
 from PySide2 import QtWidgets, QtGui, QtCore
-import utils
+
+from combinepdf import etc
+from combinepdf import utils
 
 
 class FileBox:
