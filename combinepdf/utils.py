@@ -1,10 +1,10 @@
-def string_to_range_tuples(user_string, number_of_pages):
-    """Returns a list of tuples if 'user_string' is valid, an empty list
+def string_to_range_tuples(user_string: str, number_of_pages: int) -> list:
+    """Return a list of tuples if user_string is valid, an empty list
     otherwise. From the user's point of view, pages are numbered from 1.
     In PdfFileMerger's interface, pages are numbered from 0.
 
-    Example input:    "1-5, 12, 48, 96-98", 98
-           output:    [(0, 5), (11, 12), (47, 48), (95, 98)]
+    Example: string_to_range_tuples('1-5, 12, 48, 96-98', 98)
+    return value: [(0, 5), (11, 12), (47, 48), (95, 98)]
     """
     # TODO: rewrite using regexps
     result = []
