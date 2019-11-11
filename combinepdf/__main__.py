@@ -119,8 +119,7 @@ class FileBox:
             self.filename_label.setText(os.path.basename(filename))
             self.filename_label.setToolTip(filename)
             self.rbutton_All.setChecked(True)
-            self.pages_info.setText(
-                f'{num_pages} {"pages" if num_pages > 1 else "page"} total')
+            self.pages_info.setText(f'{utils.page_count_repr(num_pages)} total')
             self.parent_app.update_main_button()
             self.page_select_edit.setText("")
 
@@ -160,8 +159,7 @@ class FileBox:
         if self.output_tuples or text == '':
             self.page_select_edit.setStyleSheet(self.default_style)
             self.page_select_info.setText(
-                f'{self.output_page_count} '
-                f'{"pages" if self.output_page_count > 1 else "page"} selected')
+                f'{utils.page_count_repr(self.output_page_count)} selected')
         else:
             self.page_select_info.setText('')
             self.page_select_edit.setStyleSheet('background: #ffa0a0')
@@ -288,8 +286,7 @@ class MainWindow(QtWidgets.QWidget):
                            for file_box in self.file_boxes])
         if total_pages > 0:
             self.button_Combine.setText(
-                f'Combine && &Save {total_pages} '
-                f'{"pages" if total_pages > 1 else "page"}')
+                f'Combine && &Save {utils.page_count_repr(total_pages)}')
             self.button_Combine.setEnabled(True)
         else:
             self.button_Combine.setText('Combine && &Save')

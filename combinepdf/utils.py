@@ -56,3 +56,8 @@ def string_to_range_tuples(user_string: str, number_of_pages: int) -> list:
             result.append(range_tuple)
 
     return result if valid else []
+
+
+def page_count_repr(count):
+    word = "page" if count == 1 else "pages"
+    return f'{count} {word}'
