@@ -232,7 +232,7 @@ class MainWindow(QtWidgets.QWidget):
         button_Exit.setIcon(QtGui.QIcon(etc.ICON_EXIT))
         button_Exit.setFixedHeight(50)
         button_Exit.setToolTip('Exit the application (Alt+X)')
-        button_Exit.clicked.connect(self.close)
+        button_Exit.clicked.connect(self.exit)
 
         bottom_layout = QtWidgets.QGridLayout()
         bottom_layout.addWidget(button_Add, 0, 0)
@@ -318,9 +318,10 @@ class MainWindow(QtWidgets.QWidget):
         self.show()
         app.exec_()
 
-    def __del__(self):
+    def exit(self):
         with open('config.json', 'w') as file:
             json.dump(self.config, file, indent=4)
+        self.close()
 
     @staticmethod
     def message_box(icon, title, text, detailed='', informative=''):
