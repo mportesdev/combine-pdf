@@ -2,6 +2,7 @@ import json
 import os
 
 import PyPDF2
+from PyPDF2.utils import PdfReadError
 from PySide2 import QtWidgets, QtGui, QtCore
 
 from combinepdf import etc
@@ -99,13 +100,12 @@ class FileBox:
         try:
             reader = PyPDF2.PdfFileReader(filename)
             num_pages = reader.numPages
-        # TODO: more specific exception class(es)
-        except Exception as err:
+        except PdfReadError as err:
             MainWindow.message_box(icon=QtWidgets.QMessageBox.Warning,
                                    title='Warning',
                                    text='File could not be read.',
                                    detailed=f'File: {filename}\n\n'
-                                            f'Error: {err}')
+                                            f'Error: {err!r}')
         else:
             if self.filename == '':
                 self.filename_label.setEnabled(True)
