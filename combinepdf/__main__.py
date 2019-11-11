@@ -180,7 +180,7 @@ class MainWindow(QtWidgets.QWidget):
         except (FileNotFoundError, ValueError):
             self.config = {'open path': os.curdir,
                            'save path': os.curdir,
-                           'save filename': 'joined-pdf.pdf',
+                           'save filename': 'Combined.pdf',
                            '# of items': 3}
 
         # list of FileBox objects; can be appended by 'add_item' method
@@ -252,7 +252,7 @@ class MainWindow(QtWidgets.QWidget):
         output_filename, __ = QtWidgets.QFileDialog.getSaveFileName(
             self, 'Save PDF file as...',
             os.path.join(self.config.get('save path', os.curdir),
-                         self.config.get('save filename', 'file.pdf')),
+                         self.config.get('save filename', 'Combined.pdf')),
             'PDF files (*.pdf)')
 
         if not output_filename:
@@ -324,7 +324,7 @@ class MainWindow(QtWidgets.QWidget):
         self.close()
 
     @staticmethod
-    def message_box(icon, title, text, detailed='', informative=''):
+    def message_box(icon, title, text, detailed=None, informative=None):
         message = QtWidgets.QMessageBox(icon, title, text)
         if detailed:
             message.setDetailedText(detailed)
