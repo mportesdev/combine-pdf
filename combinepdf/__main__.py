@@ -303,11 +303,11 @@ class MainWindow(QtWidgets.QWidget):
 
     def help_box(self):
         self.message_box(icon=QtWidgets.QMessageBox.Information,
-                         title='Help', text=self.HELP_TEXT)
+                         title='Help', text=etc.HELP_TEXT)
 
     def about_box(self):
         self.message_box(icon=QtWidgets.QMessageBox.Information,
-                         title='About', text=self.ABOUT_TEXT)
+                         title='About', text=etc.ABOUT_TEXT)
 
     def run(self, app):
         self.show()
@@ -325,21 +325,6 @@ class MainWindow(QtWidgets.QWidget):
         if informative:
             message.setInformativeText(informative)
         message.exec_()
-
-    # text constants as class variables
-    # TODO: make a nicer Help and About dialog
-    HELP_TEXT = ('In the "Pages" input field, enter single page numbers'
-                 ' or ranges of page numbers.\n'
-                 'Example: 1, 3-5, 8\n'
-                 'will produce page sequence 1, 3, 4, 5, 8\n\n'
-                 'Order is observed.\n'
-                 'Example: 2-4, 1\n'
-                 'will produce page sequence 2, 3, 4, 1\n\n'
-                 'Repeating is allowed.\n'
-                 'Example: 1-3, 2, 1-2\n'
-                 'will produce page sequence 1, 2, 3, 2, 1, 2')
-
-    ABOUT_TEXT = 'CombinePDF\n\nversion 0.8.7\n\n10 November 2019'
 
 
 def main():
