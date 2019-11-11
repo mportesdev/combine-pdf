@@ -121,7 +121,7 @@ class FileBox:
             self.rbutton_All.setChecked(True)
             self.pages_info.setText(
                 f'{num_pages} {"pages" if num_pages > 1 else "page"} total')
-            # TODO: update main button - parent_app.update_main_button
+            self.parent_app.update_main_button()
             self.page_select_edit.setText("")
 
     def remove_file(self):
