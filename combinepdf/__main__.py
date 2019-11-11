@@ -92,35 +92,37 @@ class FileBox:
             self.parent_app.config.get('open path', os.curdir),
             'PDF files (*.pdf)')
 
-        if filename:
-            self.parent_app.config['open path'] = os.path.split(filename)[0]
-            try:
-                reader = PyPDF2.PdfFileReader(filename)
-                num_pages = reader.numPages
-            # TODO: more specific exception class(es)
-            except Exception as err:
-                MainWindow.message_box(icon=QtWidgets.QMessageBox.Warning,
-                                       title='Warning',
-                                       text='File could not be read.',
-                                       detailed=f'File: {filename}\n\n'
-                                                f'Error: {err}')
-            else:
-                if self.filename == '':
-                    self.filename_label.setEnabled(True)
-                    self.button_Remove.setVisible(True)
-                    self.rbutton_All.setVisible(True)
-                    self.rbutton_Pages.setVisible(True)
-                    self.page_select_edit.setVisible(True)
-                self.filename = filename
-                self.pages = num_pages
-                self.update_output([(0, num_pages)])
-                self.filename_label.setText(os.path.basename(filename))
-                self.filename_label.setToolTip(filename)
-                self.rbutton_All.setChecked(True)
-                self.pages_info.setText(
-                    f'{num_pages} {"pages" if num_pages > 1 else "page"} total')
-                # TODO: update main button - parent_app.update_main_button
-                self.page_select_edit.setText("")
+        if not filename:
+            return
+
+        self.parent_app.config['open path'] = os.path.split(filename)[0]
+        try:
+            reader = PyPDF2.PdfFileReader(filename)
+            num_pages = reader.numPages
+        # TODO: more specific exception class(es)
+        except Exception as err:
+            MainWindow.message_box(icon=QtWidgets.QMessageBox.Warning,
+                                   title='Warning',
+                                   text='File could not be read.',
+                                   detailed=f'File: {filename}\n\n'
+                                            f'Error: {err}')
+        else:
+            if self.filename == '':
+                self.filename_label.setEnabled(True)
+                self.button_Remove.setVisible(True)
+                self.rbutton_All.setVisible(True)
+                self.rbutton_Pages.setVisible(True)
+                self.page_select_edit.setVisible(True)
+            self.filename = filename
+            self.pages = num_pages
+            self.update_output([(0, num_pages)])
+            self.filename_label.setText(os.path.basename(filename))
+            self.filename_label.setToolTip(filename)
+            self.rbutton_All.setChecked(True)
+            self.pages_info.setText(
+                f'{num_pages} {"pages" if num_pages > 1 else "page"} total')
+            # TODO: update main button - parent_app.update_main_button
+            self.page_select_edit.setText("")
 
     def remove_file(self):
         self.filename = ''
@@ -252,31 +254,34 @@ class MainWindow(QtWidgets.QWidget):
             os.path.join(self.config.get('save path', os.curdir),
                          self.config.get('save filename', 'file.pdf')),
             'PDF files (*.pdf)')
-        if output_filename:
-            self.config['save path'], self.config['save filename'] \
-                                           = os.path.split(output_filename)
-            if output_filename in [file_box.filename
-                                   for file_box in self.file_boxes]:
-                self.message_box(icon=QtWidgets.QMessageBox.Warning,
-                                 title='Warning',
-                                 text='You are not allowed to overwrite '
-                                      'one of the input files.',
-                                 informative='Please select a different '
-                                             'filename.')
-                # TODO: dialog
-                #  'Do you really wish to overwrite one of the input files?'
-            else:
-                # TODO: handle PyPDF2's custom exceptions during the
-                #  merge process
-                merger = PyPDF2.PdfFileMerger()
-                for file_box in self.file_boxes:
-                    filename = file_box.filename
-                    if filename:
-                        # iterate over "range tuples" and merge as page ranges
-                        for range_tuple in file_box.output_tuples:
-                            merger.append(filename, pages=range_tuple)
-                merger.write(output_filename)
-                merger.close()
+
+        if not output_filename:
+            return
+
+        self.config['save path'], self.config['save filename'] \
+                                       = os.path.split(output_filename)
+        if output_filename in [file_box.filename
+                               for file_box in self.file_boxes]:
+            self.message_box(icon=QtWidgets.QMessageBox.Warning,
+                             title='Warning',
+                             text='You are not allowed to overwrite '
+                                  'one of the input files.',
+                             informative='Please select a different '
+                                         'filename.')
+            # TODO: dialog
+            #  'Do you really wish to overwrite one of the input files?'
+        else:
+            # TODO: handle PyPDF2's custom exceptions during the
+            #  merge process
+            merger = PyPDF2.PdfFileMerger()
+            for file_box in self.file_boxes:
+                filename = file_box.filename
+                if filename:
+                    # iterate over "range tuples" and merge as page ranges
+                    for range_tuple in file_box.output_tuples:
+                        merger.append(filename, pages=range_tuple)
+            merger.write(output_filename)
+            merger.close()
 
     def update_main_button(self):
         total_pages = sum([file_box.output_page_count
