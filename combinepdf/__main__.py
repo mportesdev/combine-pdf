@@ -258,8 +258,7 @@ class MainWindow(QtWidgets.QWidget):
 
         self.config['save path'], self.config['save filename'] \
                                        = os.path.split(output_filename)
-        if output_filename in [file_box.filename
-                               for file_box in self.file_boxes]:
+        if output_filename in (f_box.filename for f_box in self.file_boxes):
             self.message_box(icon=QtWidgets.QMessageBox.Warning,
                              title='Warning',
                              text='You are not allowed to overwrite '
@@ -282,8 +281,7 @@ class MainWindow(QtWidgets.QWidget):
             merger.close()
 
     def update_main_button(self):
-        total_pages = sum([file_box.output_page_count
-                           for file_box in self.file_boxes])
+        total_pages = sum(f_box.output_page_count for f_box in self.file_boxes)
         if total_pages > 0:
             self.button_Combine.setText(
                 f'Combine && &Save {utils.page_count_repr(total_pages)}')
