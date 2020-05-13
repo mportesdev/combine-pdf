@@ -20,12 +20,15 @@ class FileBox:
         self.output_page_count = 0
 
         # first row of widgets
+        self.button_Blank = QtWidgets.QPushButton('Blank page')
+        self.button_Blank.clicked.connect(self.add_blank_page)
+
         self.button_Browse = QtWidgets.QPushButton('Select file...')
         self.button_Browse.clicked.connect(self.open_file)
 
         # TODO: wrap long filenames so that the window width doesn't change
         self.filename_label = QtWidgets.QLabel("[no file]")
-        self.filename_label.setEnabled(False)
+        self.filename_label.setVisible(False)
 
         self.pages_info = QtWidgets.QLabel()
         self.pages_info.setStyleSheet('color: #568dc0')
@@ -36,9 +39,6 @@ class FileBox:
         self.button_Remove.setFixedWidth(30)
         self.button_Remove.clicked.connect(self.remove_file)
         self.button_Remove.setVisible(False)
-
-        self.button_Blank = QtWidgets.QPushButton('Add a blank page')
-        self.button_Blank.clicked.connect(self.add_blank_page)
 
         # second row of widgets
         self.rbutton_All = QtWidgets.QRadioButton('All')
@@ -91,6 +91,12 @@ class FileBox:
             self.layout.setColumnStretch(column, stretch)
 
     def add_blank_page(self):
+        self.filename_label.setText('BLANK PAGE')
+        self.filename_label.setToolTip('')
+        self.filename_label.setVisible(True)
+        self.button_Blank.setVisible(False)
+        self.button_Browse.setVisible(False)
+        self.button_Remove.setVisible(True)
         # TODO: implement
         self.parent_app.update_main_button()
 
@@ -115,7 +121,9 @@ class FileBox:
                                             f'Error: {err!r}')
         else:
             if self.filename == '':
-                self.filename_label.setEnabled(True)
+                self.button_Blank.setVisible(False)
+                self.button_Browse.setVisible(False)
+                self.filename_label.setVisible(True)
                 self.button_Remove.setVisible(True)
                 self.rbutton_All.setVisible(True)
                 self.rbutton_Pages.setVisible(True)
@@ -134,9 +142,9 @@ class FileBox:
         self.filename = ''
         self.pages = 0
         self.update_output([])
-        self.filename_label.setText('[no file]')
-        self.filename_label.setEnabled(False)
-        self.filename_label.setToolTip('')
+        self.button_Blank.setVisible(True)
+        self.button_Browse.setVisible(True)
+        self.filename_label.setVisible(False)
         self.pages_info.setText('')
         self.button_Remove.setVisible(False)
         self.rbutton_All.setVisible(False)
