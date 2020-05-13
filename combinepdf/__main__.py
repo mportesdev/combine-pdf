@@ -10,13 +10,14 @@ from combinepdf import utils
 
 
 class FileBox:
-    def __init__(self, parent_app, filename, pages, output_tuples):
+    def __init__(self, parent_app):
         self.parent_app = parent_app
-        self.filename = filename
+        self.filename = ''
         # number of pages of the currently open PDF file
-        self.pages = pages
+        self.pages = 0
         # list of tuples representing page ranges selected for output
-        self.update_output(output_tuples)
+        self.output_tuples = []
+        self.output_page_count = 0
 
         # first row of widgets
         self.button_Browse = QtWidgets.QPushButton('Select file...')
@@ -182,8 +183,7 @@ class MainWindow(QtWidgets.QWidget):
                            '# of items': 3}
 
         # list of FileBox objects; can be appended by 'add_item' method
-        self.file_boxes = [FileBox(parent_app=self, filename='',
-                                   pages=0, output_tuples=[])
+        self.file_boxes = [FileBox(self)
                            for __ in range(self.config.get('# of items', 3))]
 
         button_Help = QtWidgets.QPushButton('Help')
@@ -292,8 +292,7 @@ class MainWindow(QtWidgets.QWidget):
 
     def add_item(self):
         # TODO: allow adding one or more blank pages between items
-        file_box = FileBox(parent_app=self, filename="", pages=0,
-                           output_tuples=[])
+        file_box = FileBox(self)
         self.file_boxes.append(file_box)
         self.central_layout.addLayout(file_box.layout)
         line = QtWidgets.QLabel()
