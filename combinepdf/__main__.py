@@ -35,13 +35,11 @@ class FileBox:
         self.button_Remove.setToolTip('Remove this file')
         self.button_Remove.setFixedWidth(30)
         self.button_Remove.clicked.connect(self.remove_file)
-        self.button_Remove.clicked.connect(self.parent_app.update_main_button)
         self.button_Remove.setVisible(False)
 
         # second row of widgets
         self.rbutton_All = QtWidgets.QRadioButton('All')
         self.rbutton_All.toggled.connect(self.switch_rbuttons)
-        self.rbutton_All.toggled.connect(self.parent_app.update_main_button)
         self.rbutton_All.setVisible(False)
 
         self.rbutton_Pages = QtWidgets.QRadioButton('Pages')
@@ -137,6 +135,7 @@ class FileBox:
         self.rbutton_Pages.setVisible(False)
         self.page_select_edit.setVisible(False)
         self.page_select_info.setVisible(False)
+        self.parent_app.update_main_button()
 
     def switch_rbuttons(self):
         if self.rbutton_All.isChecked():
@@ -148,6 +147,7 @@ class FileBox:
             self.page_select_edit.setEnabled(True)
             self.page_select_edit.setFocus()
             self.page_select_info.setVisible(True)
+        self.parent_app.update_main_button()
 
     def update_output(self, tuples):
         self.output_tuples = tuples
