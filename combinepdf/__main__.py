@@ -37,6 +37,9 @@ class FileBox:
         self.button_Remove.clicked.connect(self.remove_file)
         self.button_Remove.setVisible(False)
 
+        self.button_Blank = QtWidgets.QPushButton('Add a blank page')
+        self.button_Blank.clicked.connect(self.add_blank_page)
+
         # second row of widgets
         self.rbutton_All = QtWidgets.QRadioButton('All')
         self.rbutton_All.toggled.connect(self.switch_rbuttons)
@@ -73,6 +76,7 @@ class FileBox:
 
         # layout
         self.layout = QtWidgets.QGridLayout()
+        self.layout.addWidget(self.button_Blank, 1, 0)
         self.layout.addWidget(self.button_Browse, 1, 1)
         self.layout.addWidget(self.filename_label, 1, 2, 1, 3)
         self.layout.addWidget(self.pages_info, 1, 5)
@@ -85,6 +89,10 @@ class FileBox:
 
         for column, stretch in zip((2, 3, 4, 5), (10, 10, 55, 25)):
             self.layout.setColumnStretch(column, stretch)
+
+    def add_blank_page(self):
+        # TODO: implement
+        self.parent_app.update_main_button()
 
     def open_file(self):
         filename, __ = QtWidgets.QFileDialog.getOpenFileName(
