@@ -73,17 +73,17 @@ class FileBox:
 
         # layout
         self.layout = QtWidgets.QGridLayout()
-        self.layout.addWidget(self.button_Browse, 1, 0)
-        self.layout.addWidget(self.filename_label, 1, 1, 1, 3)
-        self.layout.addWidget(self.pages_info, 1, 4)
-        self.layout.addWidget(self.button_Remove, 1, 5)
-        self.layout.addWidget(self.rbutton_All, 2, 1)
-        self.layout.addWidget(self.rbutton_Pages, 2, 2)
-        self.layout.addWidget(self.page_select_edit, 2, 3)
-        self.layout.addWidget(self.page_select_info, 2, 4)
-        self.layout.addItem(self.spacer, 2, 5)
+        self.layout.addWidget(self.button_Browse, 1, 1)
+        self.layout.addWidget(self.filename_label, 1, 2, 1, 3)
+        self.layout.addWidget(self.pages_info, 1, 5)
+        self.layout.addWidget(self.button_Remove, 1, 6)
+        self.layout.addWidget(self.rbutton_All, 2, 2)
+        self.layout.addWidget(self.rbutton_Pages, 2, 3)
+        self.layout.addWidget(self.page_select_edit, 2, 4)
+        self.layout.addWidget(self.page_select_info, 2, 5)
+        self.layout.addItem(self.spacer, 2, 6)
 
-        for column, stretch in zip((1, 2, 3, 4), (10, 10, 55, 25)):
+        for column, stretch in zip((2, 3, 4, 5), (10, 10, 55, 25)):
             self.layout.setColumnStretch(column, stretch)
 
     def open_file(self):
