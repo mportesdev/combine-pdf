@@ -1,12 +1,11 @@
 import json
 import os
 
-import PyPDF2
+from PyPDF2 import PdfFileReader, PdfFileWriter
 from PyPDF2.utils import PdfReadError
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from combinepdf import etc
-from combinepdf import utils
+from . import etc, utils
 
 
 class FileBox:
@@ -112,7 +111,7 @@ class FileBox:
 
         self.parent_app.config['open path'] = os.path.split(filename)[0]
         try:
-            reader = PyPDF2.PdfFileReader(filename)
+            reader = PdfFileReader(filename)
             num_pages = reader.numPages
         except PdfReadError as err:
             MainWindow.message_box(icon=QtWidgets.QMessageBox.Warning,
@@ -287,11 +286,11 @@ class MainWindow(QtWidgets.QWidget):
         else:
             # TODO: handle PyPDF2's custom exceptions during the
             #  merge process
-            writer = PyPDF2.PdfFileWriter()
+            writer = PdfFileWriter()
             for file_box in self.file_boxes:
                 filename = file_box.filename
                 if filename:
-                    reader = PyPDF2.PdfFileReader(filename)
+                    reader = PdfFileReader(filename)
                     # add pages according to "range tuples"
                     for start, stop in file_box.output_tuples:
                         for page in reader.pages[start:stop]:
