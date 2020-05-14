@@ -28,7 +28,7 @@ class FileBox(QtWidgets.QWidget):
         self.button_Blank.clicked.connect(self.add_blank_page)
 
         # TODO: wrap long filenames so that the window width doesn't change
-        self.filename_label = QtWidgets.QLabel("[no file]")
+        self.filename_label = QtWidgets.QLabel()
         self.filename_label.setVisible(False)
 
         self.pages_info = QtWidgets.QLabel()
@@ -140,7 +140,7 @@ class FileBox(QtWidgets.QWidget):
             self.rbutton_All.setChecked(True)
             self.pages_info.setText(f'{utils.page_count_repr(num_pages)} total')
             self.parent_app.update_main_button()
-            self.page_select_edit.setText("")
+            self.page_select_edit.setText('')
 
     def remove_file(self):
         self.filename = ''
