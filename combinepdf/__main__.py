@@ -9,8 +9,9 @@ from PySide2 import QtWidgets, QtGui, QtCore
 from . import etc, utils
 
 
-class FileBox:
+class FileBox(QtWidgets.QWidget):
     def __init__(self, parent_app):
+        super().__init__()
         self.parent_app = parent_app
         self.filename = ''
         # number of pages of the currently open PDF file
