@@ -61,3 +61,8 @@ def string_to_range_tuples(user_string: str, number_of_pages: int) -> list:
 def page_count_repr(count):
     word = "page" if count == 1 else "pages"
     return f'{count} {word}'
+
+
+def page_A4_dimensions(mode='portrait', dpi=72):
+    page_A4_milimeters = (210, 297) if mode == 'portrait' else (297, 210)
+    return tuple(dimension / 25.4 * dpi for dimension in page_A4_milimeters)

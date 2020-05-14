@@ -97,7 +97,8 @@ class FileBox:
         self.button_Blank.setVisible(False)
         self.button_Browse.setVisible(False)
         self.button_Remove.setVisible(True)
-        # TODO: implement
+        self.pages = 1
+        self.output_page_count = 1
         self.parent_app.update_main_button()
 
     def open_file(self):
@@ -295,6 +296,11 @@ class MainWindow(QtWidgets.QWidget):
                     for start, stop in file_box.output_tuples:
                         for page in reader.pages[start:stop]:
                             writer.addPage(page)
+                elif file_box.pages:
+                    # blank page is indicated by (self.filename == ''
+                    #                             and self.pages == 1)
+                    writer.addBlankPage(*utils.page_A4_dimensions())
+
             with open(output_filename, 'wb') as f:
                 writer.write(f)
 
@@ -309,7 +315,6 @@ class MainWindow(QtWidgets.QWidget):
             self.button_Combine.setEnabled(False)
 
     def add_item(self):
-        # TODO: allow adding one or more blank pages between items
         file_box = FileBox(self)
         self.file_boxes.append(file_box)
         self.central_layout.addLayout(file_box.layout)
