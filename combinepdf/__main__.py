@@ -1,5 +1,6 @@
 import json
 import os
+from types import SimpleNamespace
 
 from PyPDF2 import PdfFileReader, PdfFileWriter
 from PyPDF2.utils import PdfReadError
@@ -102,14 +103,16 @@ class FileBox:
 
     def open_file(self):
         filename, __ = QtWidgets.QFileDialog.getOpenFileName(
-            self.parent_app, 'Open a PDF file',
-            self.parent_app.config.get('open path', os.curdir),
-            'PDF files (*.pdf)')
+            self.parent_app,
+            'Open a PDF file',
+            self.parent_app.config.open_path,
+            'PDF files (*.pdf)',
+        )
 
         if not filename:
             return
 
-        self.parent_app.config['open path'] = os.path.split(filename)[0]
+        self.parent_app.config.open_path = os.path.split(filename)[0]
         try:
             reader = PdfFileReader(filename)
             num_pages = reader.numPages
@@ -188,19 +191,20 @@ class MainWindow(QtWidgets.QWidget):
         self.setWindowTitle('CombinePDF')
         self.resize(QtCore.QSize(640, 300))
 
+        config_dict = dict(open_path=os.curdir, save_path=os.curdir,
+                           save_filename='Combined.pdf', num_items=3)
         try:
             with open('config.json') as f:
-                self.config = json.load(f)
+                config_dict.update(json.load(f))
         # json.decoder.JSONDecodeError is subclass of ValueError
         except (FileNotFoundError, ValueError):
-            self.config = {'open path': os.curdir,
-                           'save path': os.curdir,
-                           'save filename': 'Combined.pdf',
-                           '# of items': 3}
+            pass
+
+        self.config = SimpleNamespace(**config_dict)
 
         # list of FileBox objects; can be appended by 'add_item' method
         self.file_boxes = [FileBox(self)
-                           for __ in range(self.config.get('# of items', 3))]
+                           for __ in range(self.config.num_items)]
 
         button_Help = QtWidgets.QPushButton('Help')
         button_Help.setIcon(QtGui.QIcon(etc.ICON_QUESTION))
@@ -264,16 +268,16 @@ class MainWindow(QtWidgets.QWidget):
 
     def save_file(self):
         output_filename, __ = QtWidgets.QFileDialog.getSaveFileName(
-            self, 'Save PDF file as...',
-            os.path.join(self.config.get('save path', os.curdir),
-                         self.config.get('save filename', 'Combined.pdf')),
-            'PDF files (*.pdf)')
+            self,
+            'Save PDF file as...',
+            os.path.join(self.config.save_path, self.config.save_filename),
+            'PDF files (*.pdf)',
+        )
 
         if not output_filename:
             return
 
-        self.config['save path'], self.config['save filename'] \
-                                       = os.path.split(output_filename)
+        self.config.save_path, self.config.save_filename = os.path.split(output_filename)
         if output_filename in (f_box.filename for f_box in self.file_boxes):
             self.message_box(icon=QtWidgets.QMessageBox.Warning,
                              title='Warning',
@@ -336,7 +340,7 @@ class MainWindow(QtWidgets.QWidget):
 
     def exit(self):
         with open('config.json', 'w') as file:
-            json.dump(self.config, file, indent=4)
+            json.dump(self.config.__dict__, file, indent=4)
         self.close()
 
     @staticmethod
