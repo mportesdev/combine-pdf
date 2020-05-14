@@ -301,8 +301,8 @@ class MainWindow(QtWidgets.QWidget):
                         for page in reader.pages[start:stop]:
                             writer.addPage(page)
                 elif file_box.pages:
-                    # blank page is indicated by (self.filename == ''
-                    #                             and self.pages == 1)
+                    # file_box with a blank page is recognized by
+                    # (file_box.filename == '' and file_box.pages != 0)
                     writer.addBlankPage(*utils.page_A4_dimensions())
 
             with open(output_filename, 'wb') as f:
