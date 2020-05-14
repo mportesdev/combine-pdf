@@ -286,15 +286,17 @@ class MainWindow(QtWidgets.QWidget):
         else:
             # TODO: handle PyPDF2's custom exceptions during the
             #  merge process
-            merger = PyPDF2.PdfFileMerger()
+            writer = PyPDF2.PdfFileWriter()
             for file_box in self.file_boxes:
                 filename = file_box.filename
                 if filename:
-                    # iterate over "range tuples" and merge as page ranges
-                    for range_tuple in file_box.output_tuples:
-                        merger.append(filename, pages=range_tuple)
-            merger.write(output_filename)
-            merger.close()
+                    reader = PyPDF2.PdfFileReader(filename)
+                    # add pages according to "range tuples"
+                    for start, stop in file_box.output_tuples:
+                        for page in reader.pages[start:stop]:
+                            writer.addPage(page)
+            with open(output_filename, 'wb') as f:
+                writer.write(f)
 
     def update_main_button(self):
         total_pages = sum(f_box.output_page_count for f_box in self.file_boxes)
