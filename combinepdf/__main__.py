@@ -58,7 +58,6 @@ class FileBox(QtWidgets.QWidget):
         self.page_select_edit.textEdited.connect(self.parent()
                                                  .update_main_button)
         self.page_select_edit.setVisible(False)
-        self.default_style = self.page_select_edit.styleSheet()
 
         self.page_select_info = QtWidgets.QLabel()
         self.page_select_info.setVisible(False)
@@ -177,7 +176,7 @@ class FileBox(QtWidgets.QWidget):
         self.update_output(utils.string_to_range_tuples(text, self.pages))
 
         if self.output_tuples or text == '':
-            self.page_select_edit.setStyleSheet(self.default_style)
+            self.page_select_edit.setStyleSheet('')
             self.page_select_info.setText(
                 f'{utils.page_count_repr(self.output_page_count)} selected')
         else:
