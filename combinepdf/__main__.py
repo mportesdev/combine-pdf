@@ -10,9 +10,8 @@ from . import etc, utils
 
 
 class FileBox(QtWidgets.QWidget):
-    def __init__(self, parent_app):
-        super().__init__()
-        self.parent_app = parent_app
+    def __init__(self, parent):
+        super().__init__(parent=parent)
         self.filename = ''
         # number of pages of the currently open PDF file
         self.pages = 0
@@ -56,7 +55,7 @@ class FileBox(QtWidgets.QWidget):
         self.page_select_edit = QtWidgets.QLineEdit()
         self.page_select_edit.setPlaceholderText('Example: 1, 3-5, 8')
         self.page_select_edit.textEdited.connect(self.update_select_info)
-        self.page_select_edit.textEdited.connect(self.parent_app
+        self.page_select_edit.textEdited.connect(self.parent()
                                                  .update_main_button)
         self.page_select_edit.setVisible(False)
         self.default_style = self.page_select_edit.styleSheet()
@@ -100,20 +99,20 @@ class FileBox(QtWidgets.QWidget):
         self.button_Remove.setVisible(True)
         self.pages = 1
         self.output_page_count = 1
-        self.parent_app.update_main_button()
+        self.parent().update_main_button()
 
     def open_file(self):
         filename, __ = QtWidgets.QFileDialog.getOpenFileName(
-            self.parent_app,
+            self.parent(),
             'Open a PDF file',
-            self.parent_app.config.open_path,
+            self.parent().config.open_path,
             'PDF files (*.pdf)',
         )
 
         if not filename:
             return
 
-        self.parent_app.config.open_path = os.path.split(filename)[0]
+        self.parent().config.open_path = os.path.split(filename)[0]
         try:
             reader = PdfFileReader(filename)
             num_pages = reader.numPages
@@ -139,7 +138,7 @@ class FileBox(QtWidgets.QWidget):
             self.filename_label.setToolTip(filename)
             self.rbutton_All.setChecked(True)
             self.pages_info.setText(f'{utils.page_count_repr(num_pages)} total')
-            self.parent_app.update_main_button()
+            self.parent().update_main_button()
             self.page_select_edit.setText('')
 
     def remove_file(self):
@@ -155,7 +154,7 @@ class FileBox(QtWidgets.QWidget):
         self.rbutton_Pages.setVisible(False)
         self.page_select_edit.setVisible(False)
         self.page_select_info.setVisible(False)
-        self.parent_app.update_main_button()
+        self.parent().update_main_button()
 
     def switch_rbuttons(self):
         if self.rbutton_All.isChecked():
@@ -167,7 +166,7 @@ class FileBox(QtWidgets.QWidget):
             self.page_select_edit.setEnabled(True)
             self.page_select_edit.setFocus()
             self.page_select_info.setVisible(True)
-        self.parent_app.update_main_button()
+        self.parent().update_main_button()
 
     def update_output(self, tuples):
         self.output_tuples = tuples
