@@ -181,7 +181,7 @@ class FileBox(QtWidgets.QWidget):
                 f'{utils.page_count_repr(self.output_page_count)} selected')
         else:
             self.page_select_info.setText('')
-            self.page_select_edit.setStyleSheet('background: #ffa0a0')
+            self.page_select_edit.setStyleSheet(etc.INVALID)
 
 
 class MainWindow(QtWidgets.QWidget):

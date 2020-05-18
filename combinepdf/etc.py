@@ -13,6 +13,10 @@ ICON_TRASH = os.path.join(icon_dir, 'trash.png')
 ICON_PLUS = os.path.join(icon_dir, 'plus.png')
 
 
+# Stylesheets
+INVALID = 'color: #000000; background: #ffa0a0;'
+
+
 # Dialog texts
 
 # TODO: make a nicer Help and About dialog
