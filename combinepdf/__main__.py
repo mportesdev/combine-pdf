@@ -34,7 +34,7 @@ class FileBox(QtWidgets.QWidget):
         self.filename_label.setVisible(False)
 
         self.pages_info = QtWidgets.QLabel()
-        self.pages_info.setStyleSheet('color: #568dc0')
+        self.pages_info.setStyleSheet(etc.INFO_LABEL)
 
         self.button_Remove = QtWidgets.QPushButton()
         self.button_Remove.setIcon(QtGui.QIcon(etc.ICON_TRASH))
@@ -64,7 +64,7 @@ class FileBox(QtWidgets.QWidget):
 
         self.page_select_info = QtWidgets.QLabel()
         self.page_select_info.setVisible(False)
-        self.page_select_info.setStyleSheet('color: #568dc0')
+        self.page_select_info.setStyleSheet(etc.INFO_LABEL)
 
         self.spacer = QtWidgets.QSpacerItem(30, 0)
 

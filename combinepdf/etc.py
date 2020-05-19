@@ -15,6 +15,7 @@ ICON_PLUS = os.path.join(icon_dir, 'plus.png')
 
 # Stylesheets
 INVALID = 'color: #000000; background: #ffa0a0;'
+INFO_LABEL = 'color: #568dc0'
 
 
 # Dialog texts
