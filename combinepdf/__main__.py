@@ -12,6 +12,9 @@ from . import etc, utils
 class FileBox(QtWidgets.QWidget):
     def __init__(self, parent):
         super().__init__(parent=parent)
+        self.setAutoFillBackground(True)
+        self.default_bg = self.palette().color(self.palette().Window)
+
         self.filename = ''
         # number of pages of the currently open PDF file
         self.pages = 0
@@ -91,6 +94,7 @@ class FileBox(QtWidgets.QWidget):
         self.setLayout(self.layout)
 
     def add_blank_page(self):
+        set_widget_background(self, 0xffffffff)
         self.filename_label.setText('BLANK PAGE')
         self.filename_label.setToolTip('')
         self.filename_label.setVisible(True)
@@ -123,6 +127,7 @@ class FileBox(QtWidgets.QWidget):
                                    detailed=f'File: {filename}\n\n'
                                             f'Error: {err!r}')
         else:
+            set_widget_background(self, 0xffd8e8ff)
             if self.filename == '':
                 self.button_Browse.setVisible(False)
                 self.button_Blank.setVisible(False)
@@ -142,6 +147,7 @@ class FileBox(QtWidgets.QWidget):
             self.page_select_edit.setText('')
 
     def remove_file(self):
+        set_widget_background(self, self.default_bg)
         self.filename = ''
         self.pages = 0
         self.update_output([])
@@ -183,6 +189,12 @@ class FileBox(QtWidgets.QWidget):
         else:
             self.page_select_info.setText('')
             self.page_select_edit.setStyleSheet(etc.INVALID)
+
+
+def set_widget_background(widget, color):
+    palette = widget.palette()
+    palette.setColor(palette.Window, QtGui.QColor(color))
+    widget.setPalette(palette)
 
 
 class MainWindow(QtWidgets.QWidget):
