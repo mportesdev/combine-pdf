@@ -68,14 +68,6 @@ class FileBox(QtWidgets.QWidget):
 
         self.spacer = QtWidgets.QSpacerItem(30, 0)
 
-        # only for column width testing:
-        # self.filename_label.setStyleSheet('background: #ddd')
-        # self.pages_info.setStyleSheet('background: #ddd')
-        # self.pages_info.setStyleSheet('background: #ddd')
-        # self.rbutton_All.setStyleSheet('background: #ddd')
-        # self.rbutton_Pages.setStyleSheet('background: #ddd')
-        # self.page_select_info.setStyleSheet('background: #ddd')
-
         # layout
         self.layout = QtWidgets.QGridLayout()
         self.layout.addWidget(self.button_Browse, 1, 0)
@@ -235,16 +227,8 @@ class MainWindow(QtWidgets.QWidget):
 
         self.central_layout = QtWidgets.QVBoxLayout()
 
-        line = QtWidgets.QLabel()
-        line.setFrameStyle(QtWidgets.QFrame.HLine | QtWidgets.QFrame.Sunken)
-        self.central_layout.addWidget(line)
-
         for file_box in self.file_boxes:
             self.central_layout.addWidget(file_box)
-            line = QtWidgets.QLabel()
-            line.setFrameStyle(QtWidgets.QFrame.HLine
-                               | QtWidgets.QFrame.Sunken)
-            self.central_layout.addWidget(line)
 
         button_Add = QtWidgets.QPushButton('&Add')
         button_Add.setIcon(QtGui.QIcon(etc.ICON_PLUS))
@@ -333,10 +317,6 @@ class MainWindow(QtWidgets.QWidget):
         file_box = FileBox(self)
         self.file_boxes.append(file_box)
         self.central_layout.addWidget(file_box)
-        line = QtWidgets.QLabel()
-        line.setFrameStyle(QtWidgets.QFrame.HLine
-                           | QtWidgets.QFrame.Sunken)
-        self.central_layout.addWidget(line)
 
     def help_box(self):
         self.message_box(icon=QtWidgets.QMessageBox.Information,
