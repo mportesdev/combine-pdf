@@ -88,6 +88,7 @@ class FileBox(QtWidgets.QWidget):
 
         for column, stretch in zip((2, 3, 4, 5), (10, 10, 55, 25)):
             self.layout.setColumnStretch(column, stretch)
+        self.setLayout(self.layout)
 
     def add_blank_page(self):
         self.filename_label.setText('BLANK PAGE')
@@ -227,7 +228,7 @@ class MainWindow(QtWidgets.QWidget):
         self.central_layout.addWidget(line)
 
         for file_box in self.file_boxes:
-            self.central_layout.addLayout(file_box.layout)
+            self.central_layout.addWidget(file_box)
             line = QtWidgets.QLabel()
             line.setFrameStyle(QtWidgets.QFrame.HLine
                                | QtWidgets.QFrame.Sunken)
@@ -319,7 +320,7 @@ class MainWindow(QtWidgets.QWidget):
     def add_item(self):
         file_box = FileBox(self)
         self.file_boxes.append(file_box)
-        self.central_layout.addLayout(file_box.layout)
+        self.central_layout.addWidget(file_box)
         line = QtWidgets.QLabel()
         line.setFrameStyle(QtWidgets.QFrame.HLine
                            | QtWidgets.QFrame.Sunken)
