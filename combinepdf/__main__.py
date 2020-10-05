@@ -149,7 +149,7 @@ class FileBox(QtWidgets.QWidget):
             self.parent(),
             'Open an image file',
             self.parent().config.image_path,
-            'Image files (*.jpg; *.jpeg; *.png; *.gif)',
+            'Image files (*.png; *.jpg; *.jpeg; *.gif; *.bmp)'
         )
 
         if not filename:
@@ -159,7 +159,8 @@ class FileBox(QtWidgets.QWidget):
         temp_pdf_filename = filename + '.CPDF_TEMP.pdf'
         try:
             utils.save_image_as_pdf(filename, temp_pdf_filename)
-        except Exception as err:
+        # PIL.UnidentifiedImageError is subclass of OSError
+        except OSError as err:
             MainWindow.message_box(icon=QtWidgets.QMessageBox.Warning,
                                    title='Warning',
                                    text='Image to PDF conversion failed.',
