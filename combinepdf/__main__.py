@@ -145,7 +145,40 @@ class FileBox(QtWidgets.QWidget):
             self.page_select_edit.setText('')
 
     def open_image_file(self):
-        pass
+        filename, __ = QtWidgets.QFileDialog.getOpenFileName(
+            self.parent(),
+            'Open an image file',
+            self.parent().config.open_path,
+            'Image files (*.jpg; *.jpeg; *.png; *.gif)',
+        )
+
+        if not filename:
+            return
+
+        self.parent().config.open_path = os.path.split(filename)[0]
+        temp_pdf_filename = filename + '.CPDF_TEMP.pdf'
+        try:
+            utils.save_image_as_pdf(filename, temp_pdf_filename)
+        except Exception as err:
+            MainWindow.message_box(icon=QtWidgets.QMessageBox.Warning,
+                                   title='Warning',
+                                   text='Image to PDF conversion failed.',
+                                   detailed=f'File: {filename}\n\n'
+                                            f'Error: {err!r}')
+        else:
+            set_widget_background(self, 0xffd0f0d0)
+            if self.filename == '':
+                self.button_Browse.setVisible(False)
+                self.button_Image.setVisible(False)
+                self.button_Blank.setVisible(False)
+                self.filename_label.setVisible(True)
+                self.button_Remove.setVisible(True)
+            self.filename = temp_pdf_filename
+            self.pages = 1
+            self.update_output([(0, 1)])
+            self.filename_label.setText(os.path.basename(filename))
+            self.filename_label.setToolTip(filename)
+            self.parent().update_main_button()
 
     def remove_file(self):
         set_widget_background(self, self.default_bg)
