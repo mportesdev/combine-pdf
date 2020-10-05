@@ -148,14 +148,14 @@ class FileBox(QtWidgets.QWidget):
         filename, __ = QtWidgets.QFileDialog.getOpenFileName(
             self.parent(),
             'Open an image file',
-            self.parent().config.open_path,
+            self.parent().config.image_path,
             'Image files (*.jpg; *.jpeg; *.png; *.gif)',
         )
 
         if not filename:
             return
 
-        self.parent().config.open_path = os.path.split(filename)[0]
+        self.parent().config.image_path = os.path.split(filename)[0]
         temp_pdf_filename = filename + '.CPDF_TEMP.pdf'
         try:
             utils.save_image_as_pdf(filename, temp_pdf_filename)
@@ -238,7 +238,8 @@ class MainWindow(QtWidgets.QWidget):
         self.setWindowTitle('CombinePDF')
         self.resize(QtCore.QSize(640, 300))
 
-        config_dict = dict(open_path=os.curdir, save_path=os.curdir,
+        config_dict = dict(open_path=os.curdir, image_path=os.curdir,
+                           save_path=os.curdir,
                            save_filename='Combined.pdf', num_items=3)
         try:
             with open('config.json') as f:
