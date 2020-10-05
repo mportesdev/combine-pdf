@@ -23,8 +23,11 @@ class FileBox(QtWidgets.QWidget):
         self.output_page_count = 0
 
         # first row of widgets
-        self.button_Browse = QtWidgets.QPushButton('Select file...')
+        self.button_Browse = QtWidgets.QPushButton('Select PDF...')
         self.button_Browse.clicked.connect(self.open_file)
+
+        self.button_Image = QtWidgets.QPushButton('Select image...')
+        self.button_Image.clicked.connect(self.open_image_file)
 
         self.button_Blank = QtWidgets.QPushButton('Blank page')
         self.button_Blank.clicked.connect(self.add_blank_page)
@@ -71,7 +74,8 @@ class FileBox(QtWidgets.QWidget):
         # layout
         self.layout = QtWidgets.QGridLayout()
         self.layout.addWidget(self.button_Browse, 1, 0)
-        self.layout.addWidget(self.button_Blank, 1, 1)
+        self.layout.addWidget(self.button_Image, 1, 1)
+        self.layout.addWidget(self.button_Blank, 1, 2)
         self.layout.addWidget(self.filename_label, 1, 2, 1, 3)
         self.layout.addWidget(self.pages_info, 1, 5)
         self.layout.addWidget(self.button_Remove, 1, 6)
@@ -91,6 +95,7 @@ class FileBox(QtWidgets.QWidget):
         self.filename_label.setToolTip('')
         self.filename_label.setVisible(True)
         self.button_Browse.setVisible(False)
+        self.button_Image.setVisible(False)
         self.button_Blank.setVisible(False)
         self.button_Remove.setVisible(True)
         self.pages = 1
@@ -122,6 +127,7 @@ class FileBox(QtWidgets.QWidget):
             set_widget_background(self, 0xffd8e8ff)
             if self.filename == '':
                 self.button_Browse.setVisible(False)
+                self.button_Image.setVisible(False)
                 self.button_Blank.setVisible(False)
                 self.filename_label.setVisible(True)
                 self.button_Remove.setVisible(True)
@@ -138,12 +144,16 @@ class FileBox(QtWidgets.QWidget):
             self.parent().update_main_button()
             self.page_select_edit.setText('')
 
+    def open_image_file(self):
+        pass
+
     def remove_file(self):
         set_widget_background(self, self.default_bg)
         self.filename = ''
         self.pages = 0
         self.update_output([])
         self.button_Browse.setVisible(True)
+        self.button_Image.setVisible(True)
         self.button_Blank.setVisible(True)
         self.filename_label.setVisible(False)
         self.pages_info.setText('')
