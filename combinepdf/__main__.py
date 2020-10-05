@@ -29,7 +29,6 @@ class FileBox(QtWidgets.QWidget):
         self.button_Blank = QtWidgets.QPushButton('Blank page')
         self.button_Blank.clicked.connect(self.add_blank_page)
 
-        # TODO: wrap long filenames so that the window width doesn't change
         self.filename_label = QtWidgets.QLabel()
         self.filename_label.setVisible(False)
 
@@ -131,7 +130,7 @@ class FileBox(QtWidgets.QWidget):
             self.filename = filename
             self.pages = num_pages
             self.update_output([(0, num_pages)])
-            self.filename_label.setText(os.path.basename(filename))
+            self.filename_label.setText(os.path.basename(filename)[:80] + '...')
             self.filename_label.setToolTip(filename)
             self.rbutton_All.setChecked(True)
             self.pages_info.setText(f'{utils.page_count_repr(num_pages)} total')
