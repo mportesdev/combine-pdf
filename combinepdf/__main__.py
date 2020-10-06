@@ -89,7 +89,7 @@ class FileBox(QtWidgets.QWidget):
         self.setLayout(self.layout)
 
     def add_blank_page(self):
-        set_widget_background(self, 0xffffffff)
+        set_widget_background(self, etc.BLANK_PAGE_BGCOLOR)
         self.filename_label.setText('BLANK PAGE')
         self.filename_label.setToolTip('')
         self.filename_label.setVisible(True)
@@ -123,7 +123,7 @@ class FileBox(QtWidgets.QWidget):
                                    detailed=f'File: {filename}\n\n'
                                             f'Error: {err!r}')
         else:
-            set_widget_background(self, 0xffd8e8ff)
+            set_widget_background(self, etc.PDF_FILE_BGCOLOR)
             if self.filename == '':
                 self.button_Browse.setVisible(False)
                 self.button_Image.setVisible(False)
@@ -166,7 +166,7 @@ class FileBox(QtWidgets.QWidget):
                                    detailed=f'File: {filename}\n\n'
                                             f'Error: {err!r}')
         else:
-            set_widget_background(self, 0xffd0f0d0)
+            set_widget_background(self, etc.IMG_FILE_BGCOLOR)
             if self.filename == '':
                 self.button_Browse.setVisible(False)
                 self.button_Image.setVisible(False)

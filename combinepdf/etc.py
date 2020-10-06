@@ -12,8 +12,15 @@ ICON_INFO = os.path.join(icon_dir, 'info.png')
 ICON_TRASH = os.path.join(icon_dir, 'trash.png')
 ICON_PLUS = os.path.join(icon_dir, 'plus.png')
 
+# Colors
+
+PDF_FILE_BGCOLOR = 0xffd8e8ff
+IMG_FILE_BGCOLOR = 0xffd0f0d0
+BLANK_PAGE_BGCOLOR = 0xffffffff
+
 
 # Stylesheets
+
 INVALID = 'color: #000000; background: #ffa0a0;'
 INFO_LABEL = 'color: #568dc0'
 
