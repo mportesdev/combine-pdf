@@ -2,15 +2,15 @@ import os
 
 # Icons
 
-parent_dir = os.path.dirname(os.path.dirname(__file__))
-icon_dir = os.path.join(parent_dir, 'icons')
+PROJECT_DIR = os.path.dirname(os.path.dirname(__file__))
+ICON_DIR = os.path.join(PROJECT_DIR, 'icons')
 
-ICON_COMBINE = os.path.join(icon_dir, 'combine.png')
-ICON_EXIT = os.path.join(icon_dir, 'exit.png')
-ICON_QUESTION = os.path.join(icon_dir, 'question.png')
-ICON_INFO = os.path.join(icon_dir, 'info.png')
-ICON_TRASH = os.path.join(icon_dir, 'trash.png')
-ICON_PLUS = os.path.join(icon_dir, 'plus.png')
+ICON_COMBINE = os.path.join(ICON_DIR, 'combine.png')
+ICON_EXIT = os.path.join(ICON_DIR, 'exit.png')
+ICON_QUESTION = os.path.join(ICON_DIR, 'question.png')
+ICON_INFO = os.path.join(ICON_DIR, 'info.png')
+ICON_TRASH = os.path.join(ICON_DIR, 'trash.png')
+ICON_PLUS = os.path.join(ICON_DIR, 'plus.png')
 
 # Colors
 
