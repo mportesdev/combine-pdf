@@ -112,7 +112,7 @@ class FileBox(QtWidgets.QWidget):
         if not filename:
             return
 
-        self.parent().config.open_path = os.path.split(filename)[0]
+        self.parent().config.open_path = os.path.dirname(filename)
         try:
             reader = PdfFileReader(filename)
             num_pages = reader.numPages
@@ -154,7 +154,7 @@ class FileBox(QtWidgets.QWidget):
         if not filename:
             return
 
-        self.parent().config.image_path = os.path.split(filename)[0]
+        self.parent().config.image_path = os.path.dirname(filename)
         temp_pdf_filename = filename + '.CPDF_TEMP.pdf'
         try:
             utils.save_image_as_pdf(filename, temp_pdf_filename)
