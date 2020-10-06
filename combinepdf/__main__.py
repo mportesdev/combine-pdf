@@ -6,7 +6,7 @@ from PyPDF2 import PdfFileReader, PdfFileWriter
 from PyPDF2.utils import PdfReadError
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from . import etc, utils
+from . import constants, utils
 
 
 class FileBox(QtWidgets.QWidget):
@@ -36,10 +36,10 @@ class FileBox(QtWidgets.QWidget):
         self.filename_label.setVisible(False)
 
         self.pages_info = QtWidgets.QLabel()
-        self.pages_info.setStyleSheet(etc.INFO_LABEL)
+        self.pages_info.setStyleSheet(constants.INFO_LABEL)
 
         self.button_Remove = QtWidgets.QPushButton()
-        self.button_Remove.setIcon(QtGui.QIcon(etc.ICON_TRASH))
+        self.button_Remove.setIcon(QtGui.QIcon(constants.ICON_TRASH))
         self.button_Remove.setToolTip('Remove this file')
         self.button_Remove.setFixedWidth(30)
         self.button_Remove.clicked.connect(self.remove_file)
@@ -66,7 +66,7 @@ class FileBox(QtWidgets.QWidget):
 
         self.page_select_info = QtWidgets.QLabel()
         self.page_select_info.setVisible(False)
-        self.page_select_info.setStyleSheet(etc.INFO_LABEL)
+        self.page_select_info.setStyleSheet(constants.INFO_LABEL)
 
         self.spacer = QtWidgets.QSpacerItem(30, 0)
 
@@ -110,7 +110,7 @@ class FileBox(QtWidgets.QWidget):
                                    detailed=f'File: {filename}\n\n'
                                             f'Error: {err!r}')
         else:
-            set_widget_background(self, etc.PDF_FILE_BGCOLOR)
+            set_widget_background(self, constants.PDF_FILE_BGCOLOR)
             # hide pushbuttons
             self.button_Browse.setVisible(False)
             self.button_Image.setVisible(False)
@@ -155,7 +155,7 @@ class FileBox(QtWidgets.QWidget):
                                    detailed=f'File: {filename}\n\n'
                                             f'Error: {err!r}')
         else:
-            set_widget_background(self, etc.IMG_FILE_BGCOLOR)
+            set_widget_background(self, constants.IMG_FILE_BGCOLOR)
             # hide pushbuttons
             self.button_Browse.setVisible(False)
             self.button_Image.setVisible(False)
@@ -172,7 +172,7 @@ class FileBox(QtWidgets.QWidget):
             self.parent().update_main_button()
 
     def add_blank_page(self):
-        set_widget_background(self, etc.BLANK_PAGE_BGCOLOR)
+        set_widget_background(self, constants.BLANK_PAGE_BGCOLOR)
         # hide pushbuttons
         self.button_Browse.setVisible(False)
         self.button_Image.setVisible(False)
@@ -233,7 +233,7 @@ class FileBox(QtWidgets.QWidget):
                 f'{utils.page_count_repr(self.output_page_count)} selected')
         else:
             self.page_select_info.setText('')
-            self.page_select_edit.setStyleSheet(etc.INVALID)
+            self.page_select_edit.setStyleSheet(constants.INVALID)
 
 
 def set_widget_background(widget, color):
@@ -265,11 +265,11 @@ class MainWindow(QtWidgets.QWidget):
                            for __ in range(self.config.num_items)]
 
         button_Help = QtWidgets.QPushButton('Help')
-        button_Help.setIcon(QtGui.QIcon(etc.ICON_QUESTION))
+        button_Help.setIcon(QtGui.QIcon(constants.ICON_QUESTION))
         button_Help.clicked.connect(self.help_box)
 
         button_About = QtWidgets.QPushButton('About')
-        button_About.setIcon(QtGui.QIcon(etc.ICON_INFO))
+        button_About.setIcon(QtGui.QIcon(constants.ICON_INFO))
         button_About.clicked.connect(self.about_box)
 
         top_layout = QtWidgets.QGridLayout()
@@ -285,19 +285,19 @@ class MainWindow(QtWidgets.QWidget):
             self.central_layout.addWidget(file_box)
 
         button_Add = QtWidgets.QPushButton('&Add')
-        button_Add.setIcon(QtGui.QIcon(etc.ICON_PLUS))
+        button_Add.setIcon(QtGui.QIcon(constants.ICON_PLUS))
         button_Add.setToolTip('Add another row (Alt+A)')
         button_Add.clicked.connect(self.add_item)
 
         self.button_Combine = QtWidgets.QPushButton('Combine && &Save')
-        self.button_Combine.setIcon(QtGui.QIcon(etc.ICON_COMBINE))
+        self.button_Combine.setIcon(QtGui.QIcon(constants.ICON_COMBINE))
         self.button_Combine.setFixedHeight(50)
         self.button_Combine.setToolTip('Save the combined PDF file (Alt+S)')
         self.button_Combine.clicked.connect(self.save_file)
         self.button_Combine.setEnabled(False)
 
         button_Exit = QtWidgets.QPushButton('E&xit')
-        button_Exit.setIcon(QtGui.QIcon(etc.ICON_EXIT))
+        button_Exit.setIcon(QtGui.QIcon(constants.ICON_EXIT))
         button_Exit.setFixedHeight(50)
         button_Exit.setToolTip('Exit the application (Alt+X)')
         button_Exit.clicked.connect(self.exit)
@@ -374,11 +374,11 @@ class MainWindow(QtWidgets.QWidget):
 
     def help_box(self):
         self.message_box(icon=QtWidgets.QMessageBox.Information,
-                         title='Help', text=etc.HELP_TEXT)
+                         title='Help', text=constants.HELP_TEXT)
 
     def about_box(self):
         self.message_box(icon=QtWidgets.QMessageBox.Information,
-                         title='About', text=etc.ABOUT_TEXT)
+                         title='About', text=constants.ABOUT_TEXT)
 
     def run(self, app):
         self.show()
