@@ -88,19 +88,6 @@ class FileBox(QtWidgets.QWidget):
             self.layout.setColumnStretch(column, stretch)
         self.setLayout(self.layout)
 
-    def add_blank_page(self):
-        set_widget_background(self, etc.BLANK_PAGE_BGCOLOR)
-        self.filename_label.setText('BLANK PAGE')
-        self.filename_label.setToolTip('')
-        self.filename_label.setVisible(True)
-        self.button_Browse.setVisible(False)
-        self.button_Image.setVisible(False)
-        self.button_Blank.setVisible(False)
-        self.button_Remove.setVisible(True)
-        self.pages = 1
-        self.output_page_count = 1
-        self.parent().update_main_button()
-
     def open_file(self):
         filename, __ = QtWidgets.QFileDialog.getOpenFileName(
             self.parent(),
@@ -124,24 +111,26 @@ class FileBox(QtWidgets.QWidget):
                                             f'Error: {err!r}')
         else:
             set_widget_background(self, etc.PDF_FILE_BGCOLOR)
-            if self.filename == '':
-                self.button_Browse.setVisible(False)
-                self.button_Image.setVisible(False)
-                self.button_Blank.setVisible(False)
-                self.filename_label.setVisible(True)
-                self.button_Remove.setVisible(True)
-                self.rbutton_All.setVisible(True)
-                self.rbutton_Pages.setVisible(True)
-                self.page_select_edit.setVisible(True)
+            # hide pushbuttons
+            self.button_Browse.setVisible(False)
+            self.button_Image.setVisible(False)
+            self.button_Blank.setVisible(False)
+            # show filename and other widgets
+            self.filename_label.setVisible(True)
+            self.filename_label.setText(os.path.basename(filename)[:80] + '...')
+            self.filename_label.setToolTip(filename)
+            self.pages_info.setText(f'{utils.page_count_repr(num_pages)} total')
+            self.button_Remove.setVisible(True)
+            self.rbutton_All.setVisible(True)
+            self.rbutton_All.setChecked(True)
+            self.rbutton_Pages.setVisible(True)
+            self.page_select_edit.setVisible(True)
+            self.page_select_edit.setText('')
+
             self.filename = filename
             self.pages = num_pages
             self.update_output([(0, num_pages)])
-            self.filename_label.setText(os.path.basename(filename)[:80] + '...')
-            self.filename_label.setToolTip(filename)
-            self.rbutton_All.setChecked(True)
-            self.pages_info.setText(f'{utils.page_count_repr(num_pages)} total')
             self.parent().update_main_button()
-            self.page_select_edit.setText('')
 
     def open_image_file(self):
         filename, __ = QtWidgets.QFileDialog.getOpenFileName(
@@ -167,27 +156,44 @@ class FileBox(QtWidgets.QWidget):
                                             f'Error: {err!r}')
         else:
             set_widget_background(self, etc.IMG_FILE_BGCOLOR)
-            if self.filename == '':
-                self.button_Browse.setVisible(False)
-                self.button_Image.setVisible(False)
-                self.button_Blank.setVisible(False)
-                self.filename_label.setVisible(True)
-                self.button_Remove.setVisible(True)
+            # hide pushbuttons
+            self.button_Browse.setVisible(False)
+            self.button_Image.setVisible(False)
+            self.button_Blank.setVisible(False)
+            # show filename and other widgets
+            self.filename_label.setVisible(True)
+            self.filename_label.setText(os.path.basename(filename))
+            self.filename_label.setToolTip(filename)
+            self.button_Remove.setVisible(True)
+
             self.filename = temp_pdf_filename
             self.pages = 1
             self.update_output([(0, 1)])
-            self.filename_label.setText(os.path.basename(filename))
-            self.filename_label.setToolTip(filename)
             self.parent().update_main_button()
+
+    def add_blank_page(self):
+        set_widget_background(self, etc.BLANK_PAGE_BGCOLOR)
+        # hide pushbuttons
+        self.button_Browse.setVisible(False)
+        self.button_Image.setVisible(False)
+        self.button_Blank.setVisible(False)
+        # show filename and other widgets
+        self.filename_label.setVisible(True)
+        self.filename_label.setText('BLANK PAGE')
+        self.filename_label.setToolTip('')
+        self.button_Remove.setVisible(True)
+
+        self.pages = 1
+        self.output_page_count = 1
+        self.parent().update_main_button()
 
     def remove_file(self):
         set_widget_background(self, self.default_bg)
-        self.filename = ''
-        self.pages = 0
-        self.update_output([])
+        # show pushbuttons
         self.button_Browse.setVisible(True)
         self.button_Image.setVisible(True)
         self.button_Blank.setVisible(True)
+        # hide filename and other widgets
         self.filename_label.setVisible(False)
         self.pages_info.setText('')
         self.button_Remove.setVisible(False)
@@ -195,6 +201,10 @@ class FileBox(QtWidgets.QWidget):
         self.rbutton_Pages.setVisible(False)
         self.page_select_edit.setVisible(False)
         self.page_select_info.setVisible(False)
+
+        self.filename = ''
+        self.pages = 0
+        self.update_output([])
         self.parent().update_main_button()
 
     def switch_rbuttons(self):
