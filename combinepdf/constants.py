@@ -1,6 +1,6 @@
 import os
 
-# Icons
+# Paths
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(__file__))
 ICON_DIR = os.path.join(PROJECT_DIR, 'icons')
@@ -11,6 +11,16 @@ ICON_QUESTION = os.path.join(ICON_DIR, 'question.png')
 ICON_INFO = os.path.join(ICON_DIR, 'info.png')
 ICON_TRASH = os.path.join(ICON_DIR, 'trash.png')
 ICON_PLUS = os.path.join(ICON_DIR, 'plus.png')
+
+try:
+    HOME_DIR = os.environ['HOME']
+except KeyError:
+    HOME_DIR = os.path.join(os.environ['HOMEDRIVE'], os.environ['HOMEPATH'])
+
+TEMP_DIR = os.path.join(HOME_DIR, '.cpdf')
+
+if not os.path.exists(TEMP_DIR):
+    os.mkdir(TEMP_DIR)
 
 # Colors
 
