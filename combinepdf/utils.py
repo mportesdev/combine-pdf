@@ -1,6 +1,12 @@
+import os
+import random
+import string
+
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen.canvas import Canvas
+
+from . import constants
 
 
 def string_to_range_tuples(user_string: str, number_of_pages: int) -> list:
@@ -71,6 +77,11 @@ def page_count_repr(count):
 def page_A4_dimensions(mode='portrait', dpi=72):
     page_A4_milimeters = (210, 297) if mode == 'portrait' else (297, 210)
     return tuple(dimension / 25.4 * dpi for dimension in page_A4_milimeters)
+
+
+def get_temporary_filename(suffix):
+    filename = ''.join(random.choices(string.ascii_letters, k=50)) + suffix
+    return os.path.join(constants.TEMP_DIR, filename)
 
 
 def save_image_as_pdf(img_file, pdf_file, page_size=A4, margin=0,

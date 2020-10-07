@@ -144,7 +144,7 @@ class FileBox(QtWidgets.QWidget):
             return
 
         self.parent().config.image_path = os.path.dirname(filename)
-        temp_pdf_filename = filename + '.CPDF_TEMP.pdf'
+        temp_pdf_filename = utils.get_temporary_filename(suffix='.pdf')
         try:
             utils.save_image_as_pdf(filename, temp_pdf_filename)
         # PIL.UnidentifiedImageError is subclass of OSError
