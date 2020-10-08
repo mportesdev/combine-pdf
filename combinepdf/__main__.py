@@ -16,6 +16,7 @@ class FileBox(QtWidgets.QWidget):
         self.default_bg = self.palette().color(self.palette().Window)
 
         self.filename = ''
+        self.is_temporary_file = False
         # number of pages of the currently open PDF file
         self.pages = 0
         # list of tuples representing page ranges selected for output
@@ -167,6 +168,7 @@ class FileBox(QtWidgets.QWidget):
             self.button_Remove.setVisible(True)
 
             self.filename = temp_pdf_filename
+            self.is_temporary_file = True
             self.pages = 1
             self.update_output([(0, 1)])
             self.parent().update_main_button()
@@ -202,6 +204,9 @@ class FileBox(QtWidgets.QWidget):
         self.page_select_edit.setVisible(False)
         self.page_select_info.setVisible(False)
 
+        if self.is_temporary_file:
+            os.remove(self.filename)
+            self.is_temporary_file = False
         self.filename = ''
         self.pages = 0
         self.update_output([])
