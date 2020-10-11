@@ -138,7 +138,7 @@ class FileBox(QtWidgets.QWidget):
             self.parent(),
             'Open an image file',
             self.parent().config.image_path,
-            'Image files (*.png; *.jpg; *.jpeg; *.gif; *.bmp)'
+            'Image files (*.png *.jpg *.jpeg *.gif *.bmp)'
         )
 
         if not filename:
