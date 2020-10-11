@@ -392,6 +392,10 @@ class MainWindow(QtWidgets.QWidget):
     def exit(self):
         with open('config.json', 'w') as file:
             json.dump(self.config.__dict__, file, indent=4)
+        for file_box in self.file_boxes:
+            if file_box.is_temporary_file:
+                os.remove(file_box.filename)
+                file_box.is_temporary_file = False
         self.close()
 
     @staticmethod
