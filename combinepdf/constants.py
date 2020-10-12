@@ -1,5 +1,7 @@
 import os
 
+VERSION = '0.9.0'
+
 # Main window
 
 WINDOW_TITLE = 'CombinePDF'
@@ -55,5 +57,5 @@ HELP_TEXT = ('In the "Pages" input field, enter single page numbers'
              'will produce page sequence 1, 2, 3, 2, 1, 2')
 
 ABOUT_TEXT = ('CombinePDF\n\n'
-              'version 0.8.7\n\n'
-              '10 November 2019')
+              f'version {VERSION}\n\n'
+              '12 October 2020')
