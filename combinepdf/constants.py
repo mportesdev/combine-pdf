@@ -22,10 +22,10 @@ try:
 except KeyError:
     HOME_DIR = os.path.join(os.environ['HOMEDRIVE'], os.environ['HOMEPATH'])
 
-TEMP_DIR = os.path.join(HOME_DIR, '.cpdf')
-
-if not os.path.exists(TEMP_DIR):
-    os.mkdir(TEMP_DIR)
+LOCAL_DIR = os.path.join(HOME_DIR, '.cpdf')
+CONFIG_PATH = os.path.join(LOCAL_DIR, 'config.json')
+TEMP_DIR = os.path.join(LOCAL_DIR, 'temp')
+os.makedirs(TEMP_DIR, exist_ok=True)
 
 # Colors
 

@@ -268,7 +268,7 @@ class MainWindow(QtWidgets.QWidget):
         self.setWindowTitle(window_title)
         self.resize(QtCore.QSize(*window_size))
 
-        self.config = get_config('config.json')
+        self.config = get_config(constants.CONFIG_PATH)
         self.file_boxes = [FileBox(self)
                            for __ in range(self.config.num_items)]
         self.central_layout = self.get_central_layout()
@@ -409,8 +409,8 @@ class MainWindow(QtWidgets.QWidget):
         app.exec_()
 
     def exit(self):
-        with open('config.json', 'w') as file:
-            json.dump(self.config.__dict__, file, indent=4)
+        with open(constants.CONFIG_PATH, 'w') as config_file:
+            json.dump(self.config.__dict__, config_file, indent=4)
         for file_box in self.file_boxes:
             if file_box.is_temporary_file:
                 os.remove(file_box.filename)
