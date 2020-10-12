@@ -9,17 +9,17 @@ from reportlab.pdfgen.canvas import Canvas
 from . import constants
 
 
-def string_to_range_tuples(user_string: str, number_of_pages: int) -> list:
-    """Return a list of tuples if user_string is valid, an empty list
-    otherwise. From the user's point of view, pages are numbered from 1.
-    In PdfFileMerger's interface, pages are numbered from 0.
+def get_ranges(user_string: str, number_of_pages: int) -> list:
+    """Convert a string into a sequence of ranges.
 
-    Example: string_to_range_tuples('1-5, 12, 48, 96-98', 98)
-    return value: [(0, 5), (11, 12), (47, 48), (95, 98)]
+    If `user_string` is valid, return a list of 2-tuples representing
+    the page ranges. Otherwise, return an empty list.
+
+    From the user's point of view, pages are numbered from 1.
+    In PdfFileReader's interface, pages are numbered from 0.
     """
     # TODO: rewrite using regexps
     result = []
-    valid = True
 
     if user_string:
         user_string = user_string.strip(' ,')
@@ -40,8 +40,7 @@ def string_to_range_tuples(user_string: str, number_of_pages: int) -> list:
                     to_page = int(part.split('-', 1)[1].strip())
                 except ValueError:
                     # not a valid range of numbers
-                    valid = False
-                    break
+                    raise
                 else:
                     # valid range of numbers
 
@@ -51,8 +50,7 @@ def string_to_range_tuples(user_string: str, number_of_pages: int) -> list:
                         range_tuple = (from_page - 1, to_page)
                     else:
                         # range of numbers out of page range
-                        valid = False
-                        break
+                        raise ValueError
             else:
                 # some single number
 
@@ -62,11 +60,10 @@ def string_to_range_tuples(user_string: str, number_of_pages: int) -> list:
                     range_tuple = (from_page - 1, from_page)
                 else:
                     # number out of page range
-                    valid = False
-                    break
+                    raise ValueError
             result.append(range_tuple)
 
-    return result if valid else []
+    return result
 
 
 def page_count_repr(count):

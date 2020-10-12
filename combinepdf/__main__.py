@@ -232,7 +232,11 @@ class FileBox(QtWidgets.QWidget):
 
     def update_select_info(self):
         text = self.page_select_edit.text()
-        self.update_output(utils.string_to_range_tuples(text, self.pages))
+        try:
+            ranges = utils.get_ranges(text, self.pages)
+        except ValueError:
+            ranges = []
+        self.update_output(ranges)
 
         if self.output_tuples or text == '':
             self.page_select_edit.setStyleSheet('')
