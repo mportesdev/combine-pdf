@@ -247,79 +247,98 @@ def set_widget_background(widget, color):
     widget.setPalette(palette)
 
 
+def get_config(file_path):
+    result = dict(open_path=os.curdir, image_path=os.curdir,
+                  save_path=os.curdir, save_filename='Combined.pdf',
+                  num_items=3)
+
+    try:
+        with open(file_path) as config_file:
+            result.update(json.load(config_file))
+    # json.decoder.JSONDecodeError is subclass of ValueError
+    except (FileNotFoundError, ValueError):
+        pass
+
+    return SimpleNamespace(**result)
+
+
 class MainWindow(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('CombinePDF')
         self.resize(QtCore.QSize(640, 300))
 
-        config_dict = dict(open_path=os.curdir, image_path=os.curdir,
-                           save_path=os.curdir,
-                           save_filename='Combined.pdf', num_items=3)
-        try:
-            with open('config.json') as f:
-                config_dict.update(json.load(f))
-        # json.decoder.JSONDecodeError is subclass of ValueError
-        except (FileNotFoundError, ValueError):
-            pass
-
-        self.config = SimpleNamespace(**config_dict)
-
-        # list of FileBox objects; can be appended by 'add_item' method
+        self.config = get_config('config.json')
         self.file_boxes = [FileBox(self)
                            for __ in range(self.config.num_items)]
+        self.central_layout = self.get_central_layout()
+        self.button_Combine = self.get_main_button()
+        self.setLayout(self.get_master_layout())
 
-        button_Help = QtWidgets.QPushButton('Help')
-        button_Help.setIcon(QtGui.QIcon(constants.ICON_QUESTION))
-        button_Help.clicked.connect(self.help_box)
+    def get_top_layout(self):
+        help_button = QtWidgets.QPushButton('Help')
+        help_button.setIcon(QtGui.QIcon(constants.ICON_QUESTION))
+        help_button.clicked.connect(self.help_box)
 
-        button_About = QtWidgets.QPushButton('About')
-        button_About.setIcon(QtGui.QIcon(constants.ICON_INFO))
-        button_About.clicked.connect(self.about_box)
+        about_button = QtWidgets.QPushButton('About')
+        about_button.setIcon(QtGui.QIcon(constants.ICON_INFO))
+        about_button.clicked.connect(self.about_box)
 
-        top_layout = QtWidgets.QGridLayout()
-        top_layout.addWidget(button_Help, 0, 1)
-        top_layout.addWidget(button_About, 0, 2)
+        layout = QtWidgets.QGridLayout()
+        layout.addWidget(help_button, 0, 1)
+        layout.addWidget(about_button, 0, 2)
 
-        for column, stretch in zip((0, 1, 2), (10, 1, 1)):
-            top_layout.setColumnStretch(column, stretch)
+        for column, stretch in enumerate((10, 1, 1)):
+            layout.setColumnStretch(column, stretch)
 
-        self.central_layout = QtWidgets.QVBoxLayout()
+        return layout
 
+    def get_central_layout(self):
+        layout = QtWidgets.QVBoxLayout()
         for file_box in self.file_boxes:
-            self.central_layout.addWidget(file_box)
+            layout.addWidget(file_box)
 
-        button_Add = QtWidgets.QPushButton('&Add')
-        button_Add.setIcon(QtGui.QIcon(constants.ICON_PLUS))
-        button_Add.setToolTip('Add another row (Alt+A)')
-        button_Add.clicked.connect(self.add_item)
+        return layout
 
-        self.button_Combine = QtWidgets.QPushButton('Combine && &Save')
-        self.button_Combine.setIcon(QtGui.QIcon(constants.ICON_COMBINE))
-        self.button_Combine.setFixedHeight(50)
-        self.button_Combine.setToolTip('Save the combined PDF file (Alt+S)')
-        self.button_Combine.clicked.connect(self.save_file)
-        self.button_Combine.setEnabled(False)
+    def get_bottom_layout(self):
+        add_button = QtWidgets.QPushButton('&Add')
+        add_button.setIcon(QtGui.QIcon(constants.ICON_PLUS))
+        add_button.setToolTip('Add another row (Alt+A)')
+        add_button.clicked.connect(self.add_item)
 
-        button_Exit = QtWidgets.QPushButton('E&xit')
-        button_Exit.setIcon(QtGui.QIcon(constants.ICON_EXIT))
-        button_Exit.setFixedHeight(50)
-        button_Exit.setToolTip('Exit the application (Alt+X)')
-        button_Exit.clicked.connect(self.exit)
+        exit_button = QtWidgets.QPushButton('E&xit')
+        exit_button.setIcon(QtGui.QIcon(constants.ICON_EXIT))
+        exit_button.setFixedHeight(50)
+        exit_button.setToolTip('Exit the application (Alt+X)')
+        exit_button.clicked.connect(self.exit)
 
-        bottom_layout = QtWidgets.QGridLayout()
-        bottom_layout.addWidget(button_Add, 0, 0)
-        bottom_layout.addWidget(self.button_Combine, 1, 2)
-        bottom_layout.addWidget(button_Exit, 1, 3)
+        layout = QtWidgets.QGridLayout()
+        layout.addWidget(add_button, 0, 0)
+        layout.addWidget(self.button_Combine, 1, 2)
+        layout.addWidget(exit_button, 1, 3)
 
-        for column, stretch in zip((0, 1, 2, 3, 4), (1, 1, 3, 1, 2)):
-            bottom_layout.setColumnStretch(column, stretch)
+        for column, stretch in enumerate((1, 1, 3, 1, 2)):
+            layout.setColumnStretch(column, stretch)
 
-        master_layout = QtWidgets.QVBoxLayout()
-        master_layout.addLayout(top_layout)
-        master_layout.addLayout(self.central_layout)
-        master_layout.addLayout(bottom_layout)
-        self.setLayout(master_layout)
+        return layout
+
+    def get_master_layout(self):
+        layout = QtWidgets.QVBoxLayout()
+        layout.addLayout(self.get_top_layout())
+        layout.addLayout(self.central_layout)
+        layout.addLayout(self.get_bottom_layout())
+
+        return layout
+
+    def get_main_button(self):
+        button = QtWidgets.QPushButton('Combine && &Save')
+        button.setIcon(QtGui.QIcon(constants.ICON_COMBINE))
+        button.setFixedHeight(50)
+        button.setToolTip('Save the combined PDF file (Alt+S)')
+        button.clicked.connect(self.save_file)
+        button.setEnabled(False)
+
+        return button
 
     def save_file(self):
         output_filename, __ = QtWidgets.QFileDialog.getSaveFileName(
