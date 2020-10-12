@@ -1,5 +1,10 @@
 import os
 
+# Main window
+
+WINDOW_TITLE = 'CombinePDF'
+WINDOW_SIZE = (640, 300)
+
 # Paths
 
 PROJECT_DIR = os.path.dirname(os.path.dirname(__file__))

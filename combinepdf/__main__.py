@@ -263,10 +263,10 @@ def get_config(file_path):
 
 
 class MainWindow(QtWidgets.QWidget):
-    def __init__(self):
+    def __init__(self, window_title, window_size):
         super().__init__()
-        self.setWindowTitle('CombinePDF')
-        self.resize(QtCore.QSize(640, 300))
+        self.setWindowTitle(window_title)
+        self.resize(QtCore.QSize(*window_size))
 
         self.config = get_config('config.json')
         self.file_boxes = [FileBox(self)
@@ -429,7 +429,7 @@ class MainWindow(QtWidgets.QWidget):
 
 def main():
     app = QtWidgets.QApplication()
-    app_window = MainWindow()
+    app_window = MainWindow(constants.WINDOW_TITLE, constants.WINDOW_SIZE)
     app_window.run(app)
 
 
