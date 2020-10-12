@@ -2,10 +2,12 @@ import os
 
 VERSION = '0.9.0'
 
+
 # Main window
 
 WINDOW_TITLE = 'CombinePDF'
 WINDOW_SIZE = (640, 300)
+
 
 # Paths
 
@@ -29,6 +31,7 @@ CONFIG_PATH = os.path.join(LOCAL_DIR, 'config.json')
 TEMP_DIR = os.path.join(LOCAL_DIR, 'temp')
 os.makedirs(TEMP_DIR, exist_ok=True)
 
+
 # Colors
 
 PDF_FILE_BGCOLOR = 0xffd8e8ff
@@ -44,18 +47,26 @@ INFO_LABEL = 'color: #568dc0'
 
 # Dialog texts
 
-# TODO: make a nicer Help and About dialog
-HELP_TEXT = ('In the "Pages" input field, enter single page numbers'
-             ' or ranges of page numbers.\n'
-             'Example: 1, 3-5, 8\n'
-             'will produce page sequence 1, 3, 4, 5, 8\n\n'
-             'Order is observed.\n'
-             'Example: 2-4, 1\n'
-             'will produce page sequence 2, 3, 4, 1\n\n'
-             'Repeating is allowed.\n'
-             'Example: 1-3, 2, 1-2\n'
-             'will produce page sequence 1, 2, 3, 2, 1, 2')
+HELP_TEXT = """
+In the "Pages" input field, enter single page numbers or ranges of page numbers.
 
-ABOUT_TEXT = ('CombinePDF\n\n'
-              f'version {VERSION}\n\n'
-              '12 October 2020')
+Example:
+1, 3-5, 8
+will produce page sequence 1, 3, 4, 5, 8
+
+Example:
+2-4, 1
+will produce page sequence 2, 3, 4, 1
+
+Example:
+1-3, 2, 1-2
+will produce page sequence 1, 2, 3, 2, 1, 2
+"""
+
+ABOUT_TEXT = f"""
+CombinePDF
+
+version {VERSION}
+
+12 October 2020
+"""
