@@ -105,11 +105,12 @@ class FileBox(QtWidgets.QWidget):
             reader = PdfFileReader(filename)
             num_pages = reader.numPages
         except PdfReadError as err:
-            MainWindow.message_box(icon=QtWidgets.QMessageBox.Warning,
-                                   title='Warning',
-                                   text='File could not be read.',
-                                   detailed=f'File: {filename}\n\n'
-                                            f'Error: {err!r}')
+            message_box(
+                icon=QtWidgets.QMessageBox.Warning,
+                title='Warning',
+                text='File could not be read.',
+                detailed=f'File: {filename}\n\nError: {err!r}'
+            )
         else:
             set_widget_background(self, constants.PDF_FILE_BGCOLOR)
             # hide pushbuttons
@@ -150,11 +151,12 @@ class FileBox(QtWidgets.QWidget):
             utils.save_image_as_pdf(filename, temp_pdf_filename)
         # PIL.UnidentifiedImageError is subclass of OSError
         except OSError as err:
-            MainWindow.message_box(icon=QtWidgets.QMessageBox.Warning,
-                                   title='Warning',
-                                   text='Image to PDF conversion failed.',
-                                   detailed=f'File: {filename}\n\n'
-                                            f'Error: {err!r}')
+            message_box(
+                icon=QtWidgets.QMessageBox.Warning,
+                title='Warning',
+                text='Image to PDF conversion failed.',
+                detailed=f'File: {filename}\n\nError: {err!r}'
+            )
         else:
             set_widget_background(self, constants.IMG_FILE_BGCOLOR)
             # hide pushbuttons
@@ -239,27 +241,6 @@ class FileBox(QtWidgets.QWidget):
         else:
             self.page_select_info.setText('')
             self.page_select_edit.setStyleSheet(constants.INVALID)
-
-
-def set_widget_background(widget, color):
-    palette = widget.palette()
-    palette.setColor(palette.Window, QtGui.QColor(color))
-    widget.setPalette(palette)
-
-
-def get_config(file_path):
-    result = dict(open_path=os.curdir, image_path=os.curdir,
-                  save_path=os.curdir, save_filename='Combined.pdf',
-                  num_items=3)
-
-    try:
-        with open(file_path) as config_file:
-            result.update(json.load(config_file))
-    # json.decoder.JSONDecodeError is subclass of ValueError
-    except (FileNotFoundError, ValueError):
-        pass
-
-    return SimpleNamespace(**result)
 
 
 class MainWindow(QtWidgets.QWidget):
@@ -353,12 +334,12 @@ class MainWindow(QtWidgets.QWidget):
 
         self.config.save_path, self.config.save_filename = os.path.split(output_filename)
         if output_filename in (f_box.filename for f_box in self.file_boxes):
-            self.message_box(icon=QtWidgets.QMessageBox.Warning,
-                             title='Warning',
-                             text='You are not allowed to overwrite '
-                                  'one of the input files.',
-                             informative='Please select a different '
-                                         'filename.')
+            message_box(
+                icon=QtWidgets.QMessageBox.Warning,
+                title='Warning',
+                text='You are not allowed to overwrite one of the input files.',
+                informative='Please select a different filename.'
+            )
             # TODO: dialog
             #  'Do you really wish to overwrite one of the input files?'
         else:
@@ -396,13 +377,15 @@ class MainWindow(QtWidgets.QWidget):
         self.file_boxes.append(file_box)
         self.central_layout.addWidget(file_box)
 
-    def help_box(self):
-        self.message_box(icon=QtWidgets.QMessageBox.Information,
-                         title='Help', text=constants.HELP_TEXT)
+    @staticmethod
+    def help_box():
+        message_box(icon=QtWidgets.QMessageBox.Information, title='Help',
+                    text=constants.HELP_TEXT)
 
-    def about_box(self):
-        self.message_box(icon=QtWidgets.QMessageBox.Information,
-                         title='About', text=constants.ABOUT_TEXT)
+    @staticmethod
+    def about_box():
+        message_box(icon=QtWidgets.QMessageBox.Information, title='About',
+                    text=constants.ABOUT_TEXT)
 
     def run(self, app):
         self.show()
@@ -417,14 +400,35 @@ class MainWindow(QtWidgets.QWidget):
                 file_box.is_temporary_file = False
         self.close()
 
-    @staticmethod
-    def message_box(icon, title, text, detailed=None, informative=None):
-        message = QtWidgets.QMessageBox(icon, title, text)
-        if detailed:
-            message.setDetailedText(detailed)
-        if informative:
-            message.setInformativeText(informative)
-        message.exec_()
+
+def get_config(file_path):
+    result = dict(open_path=os.curdir, image_path=os.curdir,
+                  save_path=os.curdir, save_filename='Combined.pdf',
+                  num_items=3)
+
+    try:
+        with open(file_path) as config_file:
+            result.update(json.load(config_file))
+    # json.decoder.JSONDecodeError is subclass of ValueError
+    except (FileNotFoundError, ValueError):
+        pass
+
+    return SimpleNamespace(**result)
+
+
+def message_box(icon, title, text, detailed=None, informative=None):
+    msg_box = QtWidgets.QMessageBox(icon, title, text)
+    if detailed:
+        msg_box.setDetailedText(detailed)
+    if informative:
+        msg_box.setInformativeText(informative)
+    msg_box.exec_()
+
+
+def set_widget_background(widget, color):
+    palette = widget.palette()
+    palette.setColor(palette.Window, QtGui.QColor(color))
+    widget.setPalette(palette)
 
 
 def main():
