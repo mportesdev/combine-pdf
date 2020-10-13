@@ -26,7 +26,10 @@ try:
 except KeyError:
     HOME_DIR = os.path.join(os.environ['HOMEDRIVE'], os.environ['HOMEPATH'])
 
-LOCAL_DIR = os.path.join(HOME_DIR, '.cpdf')
+# By default, config file and temporary files are stored in $HOME/.cpdf
+# This can be overridden by setting an environment variable CPDFLOCALDIR
+LOCAL_DIR = os.getenv('CPDFLOCALDIR', os.path.join(HOME_DIR, '.cpdf'))
+
 CONFIG_PATH = os.path.join(LOCAL_DIR, 'config.json')
 TEMP_DIR = os.path.join(LOCAL_DIR, 'temp')
 os.makedirs(TEMP_DIR, exist_ok=True)
