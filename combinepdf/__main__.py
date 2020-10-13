@@ -88,13 +88,7 @@ class FileBox(QtWidgets.QWidget):
         self.setLayout(self.layout)
 
     def open_file(self):
-        filename, __ = QtWidgets.QFileDialog.getOpenFileName(
-            self.parent(),
-            'Open a PDF file',
-            self.parent().config.open_path,
-            'PDF files (*.pdf)',
-        )
-
+        filename = self.get_pdf_from_dialog()
         if not filename:
             return
 
@@ -131,14 +125,16 @@ class FileBox(QtWidgets.QWidget):
             self.update_output([(0, num_pages)])
             self.parent().update_main_button()
 
-    def open_image_file(self):
-        filename, __ = QtWidgets.QFileDialog.getOpenFileName(
-            self.parent(),
-            'Open an image file',
-            self.parent().config.image_path,
-            'Image files (*.png *.jpg *.jpeg *.gif *.bmp)'
+    def get_pdf_from_dialog(self):
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(
+            caption='Open a PDF file',
+            dir=self.parent().config.open_path,
+            filter='PDF files (*.pdf)'
         )
+        return filename
 
+    def open_image_file(self):
+        filename = self.get_image_from_dialog()
         if not filename:
             return
 
@@ -171,6 +167,14 @@ class FileBox(QtWidgets.QWidget):
             self.pages = 1
             self.update_output([(0, 1)])
             self.parent().update_main_button()
+
+    def get_image_from_dialog(self):
+        filename, _ = QtWidgets.QFileDialog.getOpenFileName(
+            caption='Open an image file',
+            dir=self.parent().config.image_path,
+            filter='Image files (*.png *.jpg *.jpeg *.gif *.bmp)'
+        )
+        return filename
 
     def add_blank_page(self):
         set_widget_background(self, constants.BLANK_PAGE_BGCOLOR)
@@ -323,13 +327,7 @@ class MainWindow(QtWidgets.QWidget):
         return button
 
     def save_file(self):
-        output_filename, __ = QtWidgets.QFileDialog.getSaveFileName(
-            self,
-            'Save PDF file as...',
-            os.path.join(self.config.save_path, self.config.save_filename),
-            'PDF files (*.pdf)',
-        )
-
+        output_filename = self.get_output_name_from_dialog()
         if not output_filename:
             return
 
@@ -345,6 +343,14 @@ class MainWindow(QtWidgets.QWidget):
             #  'Do you really wish to overwrite one of the input files?'
         else:
             pdf_utils.write_combined_pdf(self.file_boxes, output_filename)
+
+    def get_output_name_from_dialog(self):
+        filename, _ = QtWidgets.QFileDialog.getSaveFileName(
+            caption='Save PDF file as...',
+            dir=os.path.join(self.config.save_path, self.config.save_filename),
+            filter='PDF files (*.pdf)'
+        )
+        return filename
 
     def update_main_button(self):
         total_pages = sum(f_box.output_page_count for f_box in self.file_boxes)
