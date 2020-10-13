@@ -2,10 +2,6 @@ import os
 import random
 import string
 
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.utils import ImageReader
-from reportlab.pdfgen.canvas import Canvas
-
 from . import constants
 
 
@@ -79,31 +75,3 @@ def page_A4_dimensions(mode='portrait', dpi=72):
 def get_temporary_filename(suffix):
     filename = ''.join(random.choices(string.ascii_letters, k=50)) + suffix
     return os.path.join(constants.TEMP_DIR, filename)
-
-
-def save_image_as_pdf(img_file, pdf_file, page_size=A4, margin=0,
-                      stretch_small=False):
-    page_width, page_height = page_size
-    area_width, area_height = page_width - 2*margin, page_height - 2*margin
-
-    img = ImageReader(img_file)
-    img_width, img_height = img.getSize()
-    image_is_big = img_width > area_width or img_height > area_height
-    image_is_wide = img_width / img_height > area_width / area_height
-
-    # calculate scale factor to fit image to area
-    if image_is_big or stretch_small:
-        scale = (area_width / img_width if image_is_wide
-                 else area_height / img_height)
-    else:
-        scale = 1
-
-    # center scaled image to area
-    x = margin + (area_width - img_width * scale) / 2
-    y = margin + (area_height - img_height * scale) / 2
-
-    pdf_canvas = Canvas(pdf_file, pagesize=page_size)
-    pdf_canvas.drawImage(
-        img, x, y, width=img_width * scale, height=img_height * scale
-    )
-    pdf_canvas.save()

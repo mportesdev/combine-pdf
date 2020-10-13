@@ -2,11 +2,9 @@ import json
 import os
 from types import SimpleNamespace
 
-from PyPDF2 import PdfFileReader, PdfFileWriter
-from PyPDF2.utils import PdfReadError
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from . import constants, utils
+from . import constants, pdf_utils, utils
 
 
 class FileBox(QtWidgets.QWidget):
@@ -102,9 +100,8 @@ class FileBox(QtWidgets.QWidget):
 
         self.parent().config.open_path = os.path.dirname(filename)
         try:
-            reader = PdfFileReader(filename)
-            num_pages = reader.numPages
-        except PdfReadError as err:
+            num_pages = pdf_utils.get_pdf_num_pages(filename)
+        except Exception as err:
             message_box(
                 icon=QtWidgets.QMessageBox.Warning,
                 title='Warning',
@@ -148,7 +145,7 @@ class FileBox(QtWidgets.QWidget):
         self.parent().config.image_path = os.path.dirname(filename)
         temp_pdf_filename = utils.get_temporary_filename(suffix='.pdf')
         try:
-            utils.save_image_as_pdf(filename, temp_pdf_filename)
+            pdf_utils.save_image_as_pdf(filename, temp_pdf_filename)
         # PIL.UnidentifiedImageError is subclass of OSError
         except OSError as err:
             message_box(
@@ -347,24 +344,7 @@ class MainWindow(QtWidgets.QWidget):
             # TODO: dialog
             #  'Do you really wish to overwrite one of the input files?'
         else:
-            # TODO: handle PyPDF2's custom exceptions during the
-            #  merge process
-            writer = PdfFileWriter()
-            for file_box in self.file_boxes:
-                filename = file_box.filename
-                if filename:
-                    reader = PdfFileReader(filename)
-                    # add pages according to "range tuples"
-                    for start, stop in file_box.output_tuples:
-                        for page in reader.pages[start:stop]:
-                            writer.addPage(page)
-                elif file_box.pages:
-                    # file_box with a blank page is recognized by
-                    # (file_box.filename == '' and file_box.pages != 0)
-                    writer.addBlankPage(*utils.page_A4_dimensions())
-
-            with open(output_filename, 'wb') as f:
-                writer.write(f)
+            pdf_utils.write_combined_pdf(self.file_boxes, output_filename)
 
     def update_main_button(self):
         total_pages = sum(f_box.output_page_count for f_box in self.file_boxes)
