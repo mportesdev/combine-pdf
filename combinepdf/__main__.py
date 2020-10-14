@@ -262,11 +262,11 @@ class MainWindow(QtWidgets.QWidget):
     def get_top_layout(self):
         help_button = QtWidgets.QPushButton('Help')
         help_button.setIcon(QtGui.QIcon(constants.ICON_QUESTION))
-        help_button.clicked.connect(self.help_box)
+        help_button.clicked.connect(self.help_message)
 
         about_button = QtWidgets.QPushButton('About')
         about_button.setIcon(QtGui.QIcon(constants.ICON_INFO))
-        about_button.clicked.connect(self.about_box)
+        about_button.clicked.connect(self.about_message)
 
         layout = QtWidgets.QGridLayout()
         layout.addWidget(help_button, 0, 1)
@@ -331,14 +331,7 @@ class MainWindow(QtWidgets.QWidget):
 
         self.config.save_path, self.config.save_filename = os.path.split(output_filename)
         if output_filename in (f_box.filename for f_box in self.file_boxes):
-            message_box(
-                icon=QtWidgets.QMessageBox.Warning,
-                title='Warning',
-                text='You are not allowed to overwrite one of the input files.',
-                informative='Please select a different filename.'
-            )
-            # TODO: dialog
-            #  'Do you really wish to overwrite one of the input files?'
+            self.no_overwrite_message()
         else:
             pdf_utils.write_combined_pdf(self.file_boxes, output_filename)
 
@@ -366,12 +359,17 @@ class MainWindow(QtWidgets.QWidget):
         self.central_layout.addWidget(file_box)
 
     @staticmethod
-    def help_box():
+    def no_overwrite_message():
+        message_box(icon=QtWidgets.QMessageBox.Warning, title='Warning',
+                    text=constants.NO_OVERWRITE_TEXT)
+
+    @staticmethod
+    def help_message():
         message_box(icon=QtWidgets.QMessageBox.Information, title='Help',
                     text=constants.HELP_TEXT)
 
     @staticmethod
-    def about_box():
+    def about_message():
         message_box(icon=QtWidgets.QMessageBox.Information, title='About',
                     text=constants.ABOUT_TEXT)
 

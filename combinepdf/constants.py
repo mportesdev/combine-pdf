@@ -73,3 +73,9 @@ version {VERSION}
 
 12 October 2020
 """
+
+NO_OVERWRITE_TEXT = """
+You are not allowed to overwrite one of the input files.
+
+Please select a different filename.
+"""
