@@ -67,11 +67,6 @@ def page_count_repr(count):
     return f'{count} {word}'
 
 
-def page_A4_dimensions(mode='portrait', dpi=72):
-    page_A4_milimeters = (210, 297) if mode == 'portrait' else (297, 210)
-    return tuple(dimension / 25.4 * dpi for dimension in page_A4_milimeters)
-
-
 def get_temporary_filename(suffix):
     filename = ''.join(random.choices(string.ascii_letters, k=50)) + suffix
     return os.path.join(constants.TEMP_DIR, filename)

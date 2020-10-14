@@ -3,8 +3,6 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.utils import ImageReader
 from reportlab.pdfgen.canvas import Canvas
 
-from combinepdf import utils
-
 
 def get_pdf_num_pages(filename):
     reader = PdfFileReader(filename)
@@ -23,7 +21,7 @@ def write_combined_pdf(input_items, output_file):
         elif item.pages:
             # a blank page is recognized by empty `filename`
             # and non-zero `pages`
-            writer.addBlankPage(*utils.page_A4_dimensions())
+            writer.addBlankPage(*A4)
 
     with open(output_file, 'wb') as f:
         writer.write(f)
