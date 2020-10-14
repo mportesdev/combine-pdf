@@ -23,7 +23,7 @@ class FileBox(QtWidgets.QWidget):
 
         # first row of widgets
         self.button_Browse = QtWidgets.QPushButton('Select PDF...')
-        self.button_Browse.clicked.connect(self.open_file)
+        self.button_Browse.clicked.connect(self.open_pdf_file)
 
         self.button_Image = QtWidgets.QPushButton('Select image...')
         self.button_Image.clicked.connect(self.open_image_file)
@@ -46,7 +46,7 @@ class FileBox(QtWidgets.QWidget):
 
         # second row of widgets
         self.rbutton_All = QtWidgets.QRadioButton('All')
-        self.rbutton_All.toggled.connect(self.switch_rbuttons)
+        self.rbutton_All.toggled.connect(self.switch_radiobuttons)
         self.rbutton_All.setVisible(False)
 
         self.rbutton_Pages = QtWidgets.QRadioButton('Pages')
@@ -67,27 +67,30 @@ class FileBox(QtWidgets.QWidget):
         self.page_select_info.setVisible(False)
         self.page_select_info.setStyleSheet(constants.INFO_LABEL)
 
-        self.spacer = QtWidgets.QSpacerItem(30, 0)
+        self.setLayout(self.get_layout())
 
-        # layout
-        self.layout = QtWidgets.QGridLayout()
-        self.layout.addWidget(self.button_Browse, 1, 0)
-        self.layout.addWidget(self.button_Image, 1, 1)
-        self.layout.addWidget(self.button_Blank, 1, 2)
-        self.layout.addWidget(self.filename_label, 1, 2, 1, 3)
-        self.layout.addWidget(self.pages_info, 1, 5)
-        self.layout.addWidget(self.button_Remove, 1, 6)
-        self.layout.addWidget(self.rbutton_All, 2, 2)
-        self.layout.addWidget(self.rbutton_Pages, 2, 3)
-        self.layout.addWidget(self.page_select_edit, 2, 4)
-        self.layout.addWidget(self.page_select_info, 2, 5)
-        self.layout.addItem(self.spacer, 2, 6)
+    def get_layout(self):
+        layout = QtWidgets.QGridLayout()
+
+        layout.addWidget(self.button_Browse, 1, 0)
+        layout.addWidget(self.button_Image, 1, 1)
+        layout.addWidget(self.button_Blank, 1, 2)
+        layout.addWidget(self.filename_label, 1, 2, 1, 3)
+        layout.addWidget(self.pages_info, 1, 5)
+        layout.addWidget(self.button_Remove, 1, 6)
+
+        layout.addWidget(self.rbutton_All, 2, 2)
+        layout.addWidget(self.rbutton_Pages, 2, 3)
+        layout.addWidget(self.page_select_edit, 2, 4)
+        layout.addWidget(self.page_select_info, 2, 5)
+        layout.addItem(QtWidgets.QSpacerItem(30, 0), 2, 6)
 
         for column, stretch in zip((2, 3, 4, 5), (10, 10, 55, 25)):
-            self.layout.setColumnStretch(column, stretch)
-        self.setLayout(self.layout)
+            layout.setColumnStretch(column, stretch)
 
-    def open_file(self):
+        return layout
+
+    def open_pdf_file(self):
         filename = self.get_pdf_from_dialog()
         if not filename:
             return
@@ -105,16 +108,11 @@ class FileBox(QtWidgets.QWidget):
         else:
             set_widget_background(self, constants.PDF_FILE_BGCOLOR)
             self.hide_pushbuttons()
-            # show filename and other widgets
-            self.filename_label.setVisible(True)
+            self.show_widgets()
             self.filename_label.setText(os.path.basename(filename)[:80] + '...')
             self.filename_label.setToolTip(filename)
             self.pages_info.setText(f'{utils.page_count_repr(num_pages)} total')
-            self.button_Remove.setVisible(True)
-            self.rbutton_All.setVisible(True)
             self.rbutton_All.setChecked(True)
-            self.rbutton_Pages.setVisible(True)
-            self.page_select_edit.setVisible(True)
             self.page_select_edit.setText('')
 
             self.filename = filename
@@ -150,11 +148,9 @@ class FileBox(QtWidgets.QWidget):
         else:
             set_widget_background(self, constants.IMG_FILE_BGCOLOR)
             self.hide_pushbuttons()
-            # show filename and other widgets
-            self.filename_label.setVisible(True)
+            self.show_widgets(show_all=False)
             self.filename_label.setText(os.path.basename(filename))
             self.filename_label.setToolTip(filename)
-            self.button_Remove.setVisible(True)
 
             self.filename = temp_pdf_filename
             self.is_temporary_file = True
@@ -173,11 +169,9 @@ class FileBox(QtWidgets.QWidget):
     def add_blank_page(self):
         set_widget_background(self, constants.BLANK_PAGE_BGCOLOR)
         self.hide_pushbuttons()
-        # show filename and other widgets
-        self.filename_label.setVisible(True)
+        self.show_widgets(show_all=False)
         self.filename_label.setText('BLANK PAGE')
         self.filename_label.setToolTip('')
-        self.button_Remove.setVisible(True)
 
         self.pages = 1
         self.output_page_count = 1
@@ -186,14 +180,8 @@ class FileBox(QtWidgets.QWidget):
     def remove_file(self):
         set_widget_background(self, self.default_bg)
         self.show_pushbuttons()
-        # hide filename and other widgets
-        self.filename_label.setVisible(False)
+        self.hide_widgets()
         self.pages_info.setText('')
-        self.button_Remove.setVisible(False)
-        self.rbutton_All.setVisible(False)
-        self.rbutton_Pages.setVisible(False)
-        self.page_select_edit.setVisible(False)
-        self.page_select_info.setVisible(False)
 
         if self.is_temporary_file:
             os.remove(self.filename)
@@ -213,7 +201,23 @@ class FileBox(QtWidgets.QWidget):
         self.button_Image.setVisible(False)
         self.button_Blank.setVisible(False)
 
-    def switch_rbuttons(self):
+    def show_widgets(self, show_all=True):
+        self.filename_label.setVisible(True)
+        self.button_Remove.setVisible(True)
+        if show_all:
+            self.rbutton_All.setVisible(True)
+            self.rbutton_Pages.setVisible(True)
+            self.page_select_edit.setVisible(True)
+
+    def hide_widgets(self):
+        self.filename_label.setVisible(False)
+        self.button_Remove.setVisible(False)
+        self.rbutton_All.setVisible(False)
+        self.rbutton_Pages.setVisible(False)
+        self.page_select_edit.setVisible(False)
+        self.page_select_info.setVisible(False)
+
+    def switch_radiobuttons(self):
         if self.rbutton_All.isChecked():
             self.update_output([(0, self.pages)])
             self.page_select_edit.setEnabled(False)
