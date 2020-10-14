@@ -104,10 +104,7 @@ class FileBox(QtWidgets.QWidget):
             )
         else:
             set_widget_background(self, constants.PDF_FILE_BGCOLOR)
-            # hide pushbuttons
-            self.button_Browse.setVisible(False)
-            self.button_Image.setVisible(False)
-            self.button_Blank.setVisible(False)
+            self.hide_pushbuttons()
             # show filename and other widgets
             self.filename_label.setVisible(True)
             self.filename_label.setText(os.path.basename(filename)[:80] + '...')
@@ -152,10 +149,7 @@ class FileBox(QtWidgets.QWidget):
             )
         else:
             set_widget_background(self, constants.IMG_FILE_BGCOLOR)
-            # hide pushbuttons
-            self.button_Browse.setVisible(False)
-            self.button_Image.setVisible(False)
-            self.button_Blank.setVisible(False)
+            self.hide_pushbuttons()
             # show filename and other widgets
             self.filename_label.setVisible(True)
             self.filename_label.setText(os.path.basename(filename))
@@ -178,10 +172,7 @@ class FileBox(QtWidgets.QWidget):
 
     def add_blank_page(self):
         set_widget_background(self, constants.BLANK_PAGE_BGCOLOR)
-        # hide pushbuttons
-        self.button_Browse.setVisible(False)
-        self.button_Image.setVisible(False)
-        self.button_Blank.setVisible(False)
+        self.hide_pushbuttons()
         # show filename and other widgets
         self.filename_label.setVisible(True)
         self.filename_label.setText('BLANK PAGE')
@@ -194,10 +185,7 @@ class FileBox(QtWidgets.QWidget):
 
     def remove_file(self):
         set_widget_background(self, self.default_bg)
-        # show pushbuttons
-        self.button_Browse.setVisible(True)
-        self.button_Image.setVisible(True)
-        self.button_Blank.setVisible(True)
+        self.show_pushbuttons()
         # hide filename and other widgets
         self.filename_label.setVisible(False)
         self.pages_info.setText('')
@@ -214,6 +202,16 @@ class FileBox(QtWidgets.QWidget):
         self.pages = 0
         self.update_output([])
         self.parent().update_main_button()
+
+    def show_pushbuttons(self):
+        self.button_Browse.setVisible(True)
+        self.button_Image.setVisible(True)
+        self.button_Blank.setVisible(True)
+
+    def hide_pushbuttons(self):
+        self.button_Browse.setVisible(False)
+        self.button_Image.setVisible(False)
+        self.button_Blank.setVisible(False)
 
     def switch_rbuttons(self):
         if self.rbutton_All.isChecked():
