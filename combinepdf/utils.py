@@ -36,7 +36,7 @@ def get_ranges(user_string: str, number_of_pages: int) -> list:
                     to_page = int(part.split('-', 1)[1].strip())
                 except ValueError:
                     # not a valid range of numbers
-                    raise
+                    raise ValueError('invalid input')
                 else:
                     # valid range of numbers
 
@@ -46,7 +46,9 @@ def get_ranges(user_string: str, number_of_pages: int) -> list:
                         range_tuple = (from_page - 1, to_page)
                     else:
                         # range of numbers out of page range
-                        raise ValueError
+                        raise ValueError(
+                            f'interval {from_page}-{to_page} out of range'
+                        )
             else:
                 # some single number
 
@@ -56,7 +58,9 @@ def get_ranges(user_string: str, number_of_pages: int) -> list:
                     range_tuple = (from_page - 1, from_page)
                 else:
                     # number out of page range
-                    raise ValueError
+                    raise ValueError(
+                        f'value {from_page} out of range'
+                    )
             result.append(range_tuple)
 
     return result

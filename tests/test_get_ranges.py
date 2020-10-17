@@ -3,10 +3,18 @@ import pytest
 from combinepdf.utils import get_ranges
 
 
-def test_typical_input():
-    user_str = '1-5, 12, 48, 96-98'
-    num_pages = 98
-    expected = [(0, 5), (11, 12), (47, 48), (95, 98)]
+@pytest.mark.parametrize(
+    'user_str, num_pages, expected',
+    (
+        pytest.param('1', 10, [(0, 1)]),
+        pytest.param('2, 4-7, 9', 10, [(1, 2), (3, 7), (8, 9)]),
+        pytest.param('5, 1, 10', 10, [(4, 5), (0, 1), (9, 10)]),
+        pytest.param('1-5, 12-13', 20, [(0, 5), (11, 13)]),
+        pytest.param('12, 48, 96-100', 100, [(11, 12), (47, 48), (95, 100)]),
+        pytest.param('36-42, 21-23, 8-18', 50, [(35, 42), (20, 23), (7, 18)]),
+    )
+)
+def test_typical_input(user_str, num_pages, expected):
     assert get_ranges(user_str, num_pages) == expected
 
 
@@ -15,7 +23,13 @@ def test_typical_input():
     (
         pytest.param('', 100),
         pytest.param(' ', 100),
-        pytest.param('          ', 100),
+        pytest.param('  ', 100),
+        pytest.param(',', 100),
+        pytest.param(',,', 100),
+        pytest.param(', ', 100),
+        pytest.param(' ,', 100),
+        pytest.param(',,  ', 100),
+        pytest.param('  ,,', 100),
     )
 )
 def test_empty_input(user_str, num_pages):
@@ -61,19 +75,43 @@ def test_input_with_commas_and_whitespace(user_str, num_pages, expected):
 
 
 @pytest.mark.parametrize(
+    'user_str, num_pages, expected',
+    (
+        pytest.param('01', 100, [(0, 1)]),
+        pytest.param('000008', 100, [(7, 8)]),
+        pytest.param('01-05, 12-000013', 20, [(0, 5), (11, 13)]),
+        pytest.param('12, 48, 0096-0100', 100, [(11, 12), (47, 48), (95, 100)]),
+    )
+)
+def test_input_with_leading_zeros(user_str, num_pages, expected):
+    assert get_ranges(user_str, num_pages) == expected
+
+
+@pytest.mark.parametrize(
     'user_str, num_pages',
     (
         pytest.param('1', 0),
         pytest.param('0', 200),
         pytest.param(',,20,,,', 10),
-        pytest.param('1-5, 12, 48, 96-98', 97),
-        pytest.param('  , 1  -  2  ,,', 1),
-        pytest.param('5-1', 10),
-        pytest.param('7-11', 10),
     )
 )
-def test_input_out_of_range_raises_value_error(user_str, num_pages):
-    with pytest.raises(ValueError):
+def test_value_out_of_range_raises_value_error(user_str, num_pages):
+    with pytest.raises(ValueError, match=r'value [0-9]+ out of range'):
+        get_ranges(user_str, num_pages)
+
+
+@pytest.mark.parametrize(
+    'user_str, num_pages',
+    (
+        pytest.param('1-5, 12, 48, 96-98', 97),
+        pytest.param('  , 1  -  2  ,,', 1),
+        pytest.param('7-11', 10),
+        pytest.param('5-1', 10),
+        pytest.param('97-1', 97),
+    )
+)
+def test_interval_out_of_range_raises_value_error(user_str, num_pages):
+    with pytest.raises(ValueError, match=r'interval [0-9\-]+ out of range'):
         get_ranges(user_str, num_pages)
 
 
@@ -81,11 +119,44 @@ def test_input_out_of_range_raises_value_error(user_str, num_pages):
     'user_str, num_pages',
     (
         pytest.param('3-', 100),
-        pytest.param('-8', 100),
         pytest.param('0x21', 100),
         pytest.param('++55', 100),
     )
 )
 def test_invalid_input_raises_value_error(user_str, num_pages):
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match=r'invalid input'):
+        get_ranges(user_str, num_pages)
+
+
+@pytest.mark.parametrize(
+    'user_str, num_pages',
+    (
+        pytest.param('+1', 100, marks=pytest.mark.xfail),
+        pytest.param('9, +1, 2', 10, marks=pytest.mark.xfail),
+        pytest.param('+2-5', 100, marks=pytest.mark.xfail),
+        pytest.param('20-+35', 100, marks=pytest.mark.xfail),
+        pytest.param('9, 20-+35, 100', 100, marks=pytest.mark.xfail),
+        pytest.param('+68-+100', 100, marks=pytest.mark.xfail),
+    )
+)
+def test_leading_plus_is_invalid(user_str, num_pages):
+    with pytest.raises(ValueError, match=r'invalid input'):
+        get_ranges(user_str, num_pages)
+
+
+@pytest.mark.parametrize(
+    'user_str, num_pages',
+    (
+        pytest.param('-1', 10, marks=pytest.mark.xfail),
+        pytest.param('-8', 100, marks=pytest.mark.xfail),
+        pytest.param(',-55,', 100, marks=pytest.mark.xfail),
+        pytest.param(' -5 ', 10, marks=pytest.mark.xfail),
+        pytest.param('3--3', 100, marks=pytest.mark.xfail),
+        pytest.param('3 - -3', 100, marks=pytest.mark.xfail),
+        pytest.param('-3-3', 100),
+        pytest.param('-3 - 3', 100),
+    )
+)
+def test_negative_value_is_invalid(user_str, num_pages):
+    with pytest.raises(ValueError, match=r'invalid input'):
         get_ranges(user_str, num_pages)
