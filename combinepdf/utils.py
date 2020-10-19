@@ -44,9 +44,9 @@ def get_ranges(user_string: str, number_of_pages: int) -> list:
     return result
 
 
-def page_count_repr(count):
-    word = 'page' if count == 1 else 'pages'
-    return f'{count} {word}'
+def page_count_repr(number):
+    noun = 'page' if number == 1 else 'pages'
+    return f'{number} {noun}'
 
 
 def get_temporary_filename(suffix):
