@@ -109,7 +109,7 @@ class FileBox(QtWidgets.QWidget):
             set_widget_background(self, constants.PDF_FILE_BGCOLOR)
             self.hide_pushbuttons()
             self.show_widgets()
-            self.filename_label.setText(os.path.basename(filename)[:80] + '...')
+            self.filename_label.setText(utils.trimmed_basename(filename))
             self.filename_label.setToolTip(filename)
             self.pages_info.setText(f'{utils.page_count_repr(num_pages)} total')
             self.rbutton_All.setChecked(True)
@@ -149,7 +149,7 @@ class FileBox(QtWidgets.QWidget):
             set_widget_background(self, constants.IMG_FILE_BGCOLOR)
             self.hide_pushbuttons()
             self.show_widgets(show_all=False)
-            self.filename_label.setText(os.path.basename(filename))
+            self.filename_label.setText(utils.trimmed_basename(filename))
             self.filename_label.setToolTip(filename)
 
             self.filename = temp_pdf_filename

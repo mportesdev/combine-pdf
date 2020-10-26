@@ -52,3 +52,10 @@ def page_count_repr(number):
 def get_temporary_filename(suffix):
     filename = ''.join(random.choices(string.ascii_letters, k=50)) + suffix
     return os.path.join(constants.TEMP_DIR, filename)
+
+
+def trimmed_basename(filename, max_length=80):
+    result = os.path.basename(filename)
+    if len(result) > max_length:
+        result = result[:max_length - 3] + '...'
+    return result
