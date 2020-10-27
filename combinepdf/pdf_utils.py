@@ -29,8 +29,7 @@ def write_combined_pdf(input_items, output_file):
 
 def save_image_as_pdf(img_file, pdf_file, page_size=A4, margin=0,
                       stretch_small=False):
-    page_width, page_height = page_size
-    area_width, area_height = page_width - 2*margin, page_height - 2*margin
+    area_width, area_height = page_size[0] - 2*margin, page_size[1] - 2*margin
 
     img = ImageReader(img_file)
     img_width, img_height = img.getSize()
@@ -44,12 +43,13 @@ def save_image_as_pdf(img_file, pdf_file, page_size=A4, margin=0,
     else:
         scale = 1
 
+    img_new_width = img_width * scale
+    img_new_height = img_height * scale
+
     # center scaled image to area
-    x = margin + (area_width - img_width * scale) / 2
-    y = margin + (area_height - img_height * scale) / 2
+    x = margin + (area_width - img_new_width) / 2
+    y = margin + (area_height - img_new_height) / 2
 
     pdf_canvas = Canvas(pdf_file, pagesize=page_size)
-    pdf_canvas.drawImage(
-        img, x, y, width=img_width * scale, height=img_height * scale
-    )
+    pdf_canvas.drawImage(img, x, y, width=img_new_width, height=img_new_height)
     pdf_canvas.save()
