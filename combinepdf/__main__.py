@@ -4,7 +4,7 @@ from types import SimpleNamespace
 
 from PySide2 import QtWidgets, QtGui, QtCore
 
-from . import constants, pdf_utils, utils
+from . import constants, pdf_utils, utils, __version__
 
 
 class FileBox(QtWidgets.QWidget):
@@ -375,7 +375,7 @@ class MainWindow(QtWidgets.QWidget):
     @staticmethod
     def about_message():
         message_box(icon=QtWidgets.QMessageBox.Information, title='About',
-                    text=constants.ABOUT_TEXT)
+                    text=constants.ABOUT_TEXT.format(__version__))
 
     def run(self, app):
         self.show()
